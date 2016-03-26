@@ -63,7 +63,7 @@ AM_GNU_GETTEXT([external])
 dnl ***********************************************************************
 dnl Check for required programs
 dnl ***********************************************************************
-INTROSPECTION_REQUIRED = 1.46.0
+INTROSPECTION_REQUIRED=1.46.0
 
 AC_PROG_CC
 AC_PROG_INSTALL
@@ -81,12 +81,13 @@ AC_SUBST(INTROSPECTION_REQUIRED)
 dnl ***********************************************************************
 dnl Check for required packages
 dnl ***********************************************************************
-GIO_REQUIRED = 2.46.0
-GLIB_REQUIRED = 2.46.0
-PEAS_REQUIRED = 1.16.0
+GIO_REQUIRED=2.46.0
+GLIB_REQUIRED=2.46.0
+PEAS_REQUIRED=1.16.0
 
 PKG_CHECK_MODULES(GNLP, [
 	gio-2.0 >= $GIO_REQUIRED
+	gio-unix-2.0 >= $GIO_REQUIRED
 	gobject-2.0 >= $GLIB_REQUIRED
 	gmodule-2.0 >= $GLIB_REQUIRED
 	gobject-introspection-1.0 >= $INTROSPECTION_REQUIRED
@@ -126,10 +127,14 @@ AC_OUTPUT
 
 
 echo ""
-echo " ${PACKAGE} - ${VERSION}"
+echo "      GNOME Natural Language Parser - ${VERSION}"
+echo "    ------------------------------------------"
 echo ""
-echo " Options"
+echo "       Flags:"
+echo "              CFlags: ${GNLP_CFLAGS}"
 echo ""
-echo "  Prefix ............................... : ${prefix}"
-echo "  Libdir ............................... : ${libdir}"
+echo "       Options"
+echo ""
+echo "              Prefix ............................... : ${prefix}"
+echo "              Libdir ............................... : ${libdir}"
 echo ""
