@@ -117,6 +117,8 @@ AC_CONFIG_FILES([
 	data/Makefile
 	data/gnlp-$API_VERSION.pc:data/gnlp.pc.in
 
+	tests/Makefile
+
 	po/Makefile.in
 ],[],
 [API_VERSION='$API_VERSION'])

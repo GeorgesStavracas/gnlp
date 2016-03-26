@@ -1,8 +1,4 @@
-SUBDIRS = \
-	data \
-	po \
-	src \
-	$(NULL)
+SUBDIRS = data po src tests
 
 EXTRA_DIST = AUTHORS
 
@@ -24,6 +20,7 @@ AUTHORS:
 dist-hook: dist-ChangeLog
 
 GITIGNOREFILES = \
+	**/.libs \
 	**/*.swp \
 	*.o \
 	aclocal.m4 \
