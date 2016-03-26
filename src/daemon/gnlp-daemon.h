@@ -1,4 +1,4 @@
-/* gnlp.h
+/* gnlp-daemon.h
  *
  * Copyright (C) 2016 Georges Basile Stavracas Neto <georges.stavracas@gmail.com>
  *
@@ -16,19 +16,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GNLP_H
-#define GNLP_H
+#ifndef GNLP_DAEMON_H
+#define GNLP_DAEMON_H
 
+#include <gio/gio.h>
 #include <glib.h>
+#include <glib-object.h>
 
 G_BEGIN_DECLS
 
-#define GNLP_INSIDE
-# include "daemon/gnlp-engine.h"
-# include "gnlp-context.h"
-# include "gnlp-version.h"
-#undef GNLP_INSIDE
+#define GNLP_TYPE_DAEMON (gnlp_daemon_get_type())
+
+G_DECLARE_FINAL_TYPE (GnlpDaemon, gnlp_daemon, GNLP, DAEMON, GApplication)
+
+GnlpDaemon*          gnlp_daemon_new                             (void);
 
 G_END_DECLS
 
-#endif /* GNLP_H */
+#endif /* GNLP_DAEMON_H */
+

@@ -1,4 +1,4 @@
-/* gnlp.h
+/* main.c
  *
  * Copyright (C) 2016 Georges Basile Stavracas Neto <georges.stavracas@gmail.com>
  *
@@ -16,19 +16,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GNLP_H
-#define GNLP_H
-
 #include <glib.h>
 
-G_BEGIN_DECLS
+#include "gnlp-daemon.h"
 
-#define GNLP_INSIDE
-# include "daemon/gnlp-engine.h"
-# include "gnlp-context.h"
-# include "gnlp-version.h"
-#undef GNLP_INSIDE
+gint
+main (gint   argc,
+      gchar *argv[])
+{
+  GnlpDaemon *daemon;
 
-G_END_DECLS
+  g_set_prgname ("gnlp-daemon");
+  g_set_application_name ("Gnlp Daemon");
 
-#endif /* GNLP_H */
+  daemon = gnlp_daemon_new ();
+
+  return g_application_run (G_APPLICATION (daemon), argc, argv);
+}

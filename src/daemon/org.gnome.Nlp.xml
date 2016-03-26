@@ -1,0 +1,105 @@
+<!DOCTYPE node PUBLIC
+"-//freedesktop//DTD D-Bus Object Introspection 1.0//EN"
+"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+
+<node name="/" xmlns:doc="http://www.freedesktop.org/dbus/1.0/doc.dtd">
+
+  <!--
+    org.gnome.Nlp.Manager:
+    @short_description: Manager interface
+
+    Interface for top-level daemon operations.
+  -->
+  <interface name="org.gnome.Nlp.Manager">
+    <!--
+      CreateContext:
+      @application_id: The identifier of the application requesting a context
+
+      Creates a new context for the given application id. This method should never be
+      used by client applications.
+    -->
+    <method name='CreateContext'>
+      <arg type='s' name='application_id' direction='in' />
+    </method>
+
+    <!--
+      DestroyContext:
+      @application_id: The identifier of the application requesting a context
+
+      Destroy a previously created context for the given application id. This method
+      should never be used by client applications.
+    -->
+    <method name='DestroyContext'>
+      <arg type='s' name='application_id' direction='in' />
+    </method>
+
+    <!--
+      ListOperations:
+      @language: The desired language. If no language is passed, it assumes the
+                 system language. We prioritize operations for the given language.
+      @extensions: an array of (language, extension name).
+
+      Retrieves the list of available operations.
+    -->
+    <method name='ListOperations'>
+      <arg type='s' name='language' direction='in' />
+      <arg type='as' name='operations' direction='out' />
+    </method>
+  </interface>
+
+  <!--
+    org.gnome.Nlp.Operation:
+    @short_description: Interface for operations
+
+    Interface for top-level daemon operations. Operations always have the
+    pattern of:
+        - Setup the input
+        - Run
+        - Retrieve the output
+
+    Anything out of this flow can produce unknown results. Operations are
+    implemented as plugins managed by the server proccess.
+  -->
+  <interface name="org.gnome.Nlp.Operation">
+    <!--
+        Id:
+
+        Unique identifier of the operations.
+      -->
+    <property name="Id" type="s" access="read" />
+
+    <!--
+        Status:
+
+        Status of the operations.
+        Valid statuses: 0 = Unknown, 1 = Ready, 2 = Running, 3 = Complete, 4 = error
+      -->
+    <property name='Status' type='u' access='read' />
+
+    <!--
+        SetInput:
+
+        Setup the input information for the operation.
+    -->
+    <method name="SetInput">
+      <arg type='a{sv}' name='data' direction='in' />
+    </method>
+
+    <!--
+        Run:
+
+        Runs the operation.
+    -->
+    <method name='Run' />
+
+    <!--
+        GetOutput:
+
+        Retrieve the output of the operation.
+    -->
+    <method name='GetOutput'>
+      <arg type='a{sv}' name='data' direction='out' />
+      <arg type='b' name='success' direction='out' />
+    </method>
+  </interface>
+</node>
