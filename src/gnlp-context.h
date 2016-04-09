@@ -19,6 +19,8 @@
 #ifndef GNLP_CONTEXT_H
 #define GNLP_CONTEXT_H
 
+#include "daemon/gnlp-dbus-code.h"
+
 #include <gio/gio.h>
 #include <glib-object.h>
 
@@ -50,6 +52,23 @@ GList*               gnlp_context_list_operations_finish         (GAsyncResult  
                                                                   GError            **error);
 
 GList*               gnlp_context_list_operations_sync           (GnlpContext        *self,
+                                                                  const gchar        *language,
+                                                                  GCancellable       *cancellable,
+                                                                  GError            **error);
+
+void                 gnlp_context_create_operation               (GnlpContext         *self,
+                                                                  const gchar         *operation,
+                                                                  const gchar         *language,
+                                                                  GCancellable        *cancellable,
+                                                                  GAsyncReadyCallback  callback,
+                                                                  gpointer             user_data);
+
+GnlpOperation*       gnlp_context_create_operation_finish        (GnlpContext        *self,
+                                                                  GAsyncResult       *result,
+                                                                  GError            **error);
+
+GnlpOperation*       gnlp_context_create_operation_sync          (GnlpContext        *self,
+                                                                  const gchar         *operation,
                                                                   const gchar        *language,
                                                                   GCancellable       *cancellable,
                                                                   GError            **error);

@@ -17,7 +17,6 @@
  */
 
 #include "gnlp-context.h"
-#include "daemon/gnlp-dbus-code.h"
 
 #include <glib/gi18n.h>
 
@@ -460,4 +459,171 @@ gnlp_context_list_operations_sync (GnlpContext   *self,
     }
 
   return NULL;
+}
+
+/**
+ * gnlp_context_create_operation:
+ * @self: a #GnlpContext
+ * @operation: the desired operation
+ * @language: (nullable): the target language
+ * @cancellable: (nullable): optional #GCancellable object
+ * @callback: (scope async): a #GAsyncReadyCallback to call when the initialization is done
+ * @user_data: (closure): data to pass to the callback function
+ *
+ * Start creating @operation in the server daemon.
+ *
+ * Since: 0.1.0
+ */
+void
+gnlp_context_create_operation (GnlpContext         *self,
+                               const gchar         *operation,
+                               const gchar         *language,
+                               GCancellable        *cancellable,
+                               GAsyncReadyCallback  callback,
+                               gpointer             user_data)
+{
+  GnlpManager *manager;
+
+  g_return_if_fail (operation != NULL);
+  g_return_if_fail (GNLP_IS_CONTEXT (self));
+
+  manager = get_manager (self);
+
+  if (manager)
+    {
+      gnlp_manager_call_create_operation (manager,
+                                          operation,
+                                          language ? language : "",
+                                          self->application_id,
+                                          cancellable,
+                                          callback,
+                                          user_data);
+    }
+}
+
+/**
+ * gnlp_context_create_operation_finish:
+ * @self: a #GnlpContext
+ * @result: a #GAsyncResult
+ * @error: (nullable): return location for a #GError
+ *
+ * Finishes an asynchronous initialization started in gnlp_context_create_operation(). If
+ * an error occurs, the functions sets @error and returns %NULL.
+ *
+ * Returns: (transfer full) (nullable): a #GnlpContext
+ *
+ * Since: 0.1.0
+ */
+GnlpOperation*
+gnlp_context_create_operation_finish (GnlpContext   *self,
+                                      GAsyncResult  *result,
+                                      GError       **error)
+{
+  GnlpOperation *operation;
+  GnlpManager *manager;
+  GList *objects, *aux;
+  gboolean success;
+  gchar *operation_id;
+
+  manager = GNLP_MANAGER (g_async_result_get_source_object (result));
+
+  gnlp_manager_call_create_operation_finish (manager,
+                                             &operation_id,
+                                             &success,
+                                             result,
+                                             error);
+
+  if (!success)
+    return NULL;
+
+  /* Retrieve the object from the bus */
+  operation = NULL;
+  objects = g_dbus_object_manager_get_objects (self->object_manager);
+
+  for (aux = objects; aux != NULL; aux = aux->next)
+    {
+      GnlpOperation *op;
+
+      op = gnlp_object_peek_operation (aux->data);
+
+      if (!op)
+        continue;
+
+      if (g_strcmp0 (gnlp_operation_get_id (op), operation_id))
+        {
+          operation = g_object_ref (op);
+          break;
+        }
+    }
+
+  g_list_free_full (objects, g_object_unref);
+
+  return operation;
+}
+
+/**
+ * gnlp_context_create_operation_sync:
+ * @self: a #GnlpContext
+ * @operation_name: the operation name
+ * @language: the desired language override
+ * @cancellable: (nullable): optional #GCancellable object
+ * @error: (nullable): return location for a #GError
+ *
+ * Create an operation exactly like gnlp_context_create_operation(), but
+ * synchronously. This version will block the running thread.
+ *
+ * Returns: (transfer full) (nullable): a #GnlpContext.
+ *
+ * Since: 0.1.0
+ */
+GnlpOperation*
+gnlp_context_create_operation_sync (GnlpContext   *self,
+                                    const gchar   *operation_name,
+                                    const gchar   *language,
+                                    GCancellable  *cancellable,
+                                    GError       **error)
+{
+  GnlpOperation *operation;
+  GnlpManager *manager;
+  GList *objects, *aux;
+  gboolean success;
+  gchar *operation_id;
+
+  manager = get_manager (self);
+
+  gnlp_manager_call_create_operation_sync (manager,
+                                           operation_name,
+                                           language,
+                                           self->application_id,
+                                           &operation_id,
+                                           &success,
+                                           cancellable,
+                                           error);
+
+  if (!success)
+    return NULL;
+
+  /* Retrieve the object from the bus */
+  operation = NULL;
+  objects = g_dbus_object_manager_get_objects (self->object_manager);
+
+  for (aux = objects; aux != NULL; aux = aux->next)
+    {
+      GnlpOperation *op;
+
+      op = gnlp_object_peek_operation (aux->data);
+
+      if (!op)
+        continue;
+
+      if (g_strcmp0 (gnlp_operation_get_id (op), operation_id))
+        {
+          operation = g_object_ref (op);
+          break;
+        }
+    }
+
+  g_list_free_full (objects, g_object_unref);
+
+  return operation;
 }
