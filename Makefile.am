@@ -20,9 +20,15 @@ AUTHORS:
 dist-hook: dist-ChangeLog
 
 GITIGNOREFILES = \
+	m4/ \
+	ABOUT-NLS \
+	**/.buildconfig \
+	**/Makefile \
+	**/*.in \
 	**/.libs \
 	**/*.swp \
 	*.o \
+	**/gnlp-dbus-code* \
 	aclocal.m4 \
 	build-aux \
 	ChangeLog \
