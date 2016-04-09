@@ -16,6 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "gnlp-context-manager.h"
 #include "gnlp-daemon.h"
 #include "gnlp-dbus-code.h"
 #include "gnlp-engine.h"
@@ -26,6 +27,7 @@ struct _GnlpDaemon
 
   GnlpEngine         *engine;
   GnlpManager        *manager;
+  GnlpContextManager *context_manager;
   GDBusObjectManagerServer *object_manager;
 };
 
@@ -47,6 +49,8 @@ handle_create_context (GnlpManager           *manager,
 {
   g_debug ("Creating server-side context for application '%s'", application_id);
 
+  gnlp_context_manager_create_context (daemon->context_manager, application_id);
+
   gnlp_manager_complete_create_context (manager, invocation);
 
   return TRUE;
@@ -59,6 +63,8 @@ handle_destroy_context (GnlpManager           *manager,
                         GnlpDaemon            *daemon)
 {
   g_debug ("Destroying server-side context for application '%s'", application_id);
+
+  gnlp_context_manager_destroy_context (daemon->context_manager, application_id);
 
   gnlp_manager_complete_destroy_context (manager, invocation);
 
@@ -99,6 +105,58 @@ handle_list_operations (GnlpManager           *manager,
 
   g_list_free_full (operations, g_free);
   g_strfreev (array);
+
+  return TRUE;
+}
+
+static gboolean
+handle_create_operation (GnlpManager           *manager,
+                         GDBusMethodInvocation *invocation,
+                         const gchar           *name,
+                         const gchar           *language,
+                         const gchar           *application_id,
+                         GnlpDaemon            *daemon)
+{
+  GnlpClientContext *client_context;
+  GnlpObjectSkeleton *skeleton;
+  GnlpOperation *operation;
+  gchar *operation_id;
+  gchar *object_path;
+
+  client_context = gnlp_context_manager_get_context (daemon->context_manager,
+                                                     application_id);
+
+  /* Trying to create an operation for a dead context? Something is wrong */
+  if (!client_context)
+    {
+      gnlp_manager_complete_create_operation (manager,
+                                              invocation,
+                                              NULL,
+                                              FALSE);
+
+      return TRUE;
+    }
+
+  operation_id = gnlp_client_context_create_operation (client_context,
+                                                       name,
+                                                       language);
+
+  object_path = g_strdup_printf ("/org/gnome/Nlp/Operation/%s/%s",
+                                 application_id,
+                                 operation_id);
+
+  /* Export the operation */
+  operation = gnlp_operation_skeleton_new ();
+
+  skeleton = gnlp_object_skeleton_new (object_path);
+  gnlp_object_skeleton_set_operation (skeleton, operation);
+
+  g_dbus_object_manager_server_export (daemon->object_manager, G_DBUS_OBJECT_SKELETON (skeleton));
+
+  gnlp_manager_complete_create_operation (manager,
+                                          invocation,
+                                          operation_id,
+                                          TRUE);
 
   return TRUE;
 }
@@ -159,6 +217,11 @@ gnlp_daemon_dbus_register (GApplication     *application,
                     G_CALLBACK (handle_list_operations),
                     self);
 
+  g_signal_connect (self->manager,
+                    "handle-create-operation",
+                    G_CALLBACK (handle_create_operation),
+                    self);
+
   /* Export the context manager */
   object = gnlp_object_skeleton_new ("/org/gnome/Nlp/Manager");
   gnlp_object_skeleton_set_manager (object, self->manager);
@@ -205,6 +268,7 @@ static void
 gnlp_daemon_init (GnlpDaemon *self)
 {
   self->engine = gnlp_engine_new ();
+  self->context_manager = gnlp_context_manager_new (self->engine);
 }
 
 GnlpDaemon*

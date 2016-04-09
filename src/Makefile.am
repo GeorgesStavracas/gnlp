@@ -37,6 +37,10 @@ libgnlp_@API_VERSION@_la_LDFLAGS = \
 libexec_PROGRAMS = gnlp-daemon
 
 gnlp_daemon_SOURCES = \
+	daemon/gnlp-client-context.c \
+	daemon/gnlp-client-context.h \
+	daemon/gnlp-context-manager.c \
+	daemon/gnlp-context-manager.h \
 	daemon/gnlp-daemon.c \
 	daemon/gnlp-daemon.h \
 	daemon/gnlp-engine.c \
