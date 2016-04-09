@@ -45,6 +45,22 @@
       <arg type='s' name='language' direction='in' />
       <arg type='as' name='operations' direction='out' />
     </method>
+
+    <!--
+      CreateOperation:
+      @language: The desired language. If no language is passed, it assumes the
+                 system language. We prioritize operations for the given language.
+      @extensions: an array of (language, extension name).
+
+      Retrieves the list of available operations.
+    -->
+    <method name='CreateOperation'>
+      <arg type='s' name='name' direction='in' />
+      <arg type='s' name='language' direction='in' />
+      <arg type='s' name='application_id' direction='in' />
+      <arg type='s' name='operation_id' direction='out' />
+      <arg type='b' name='success' direction='out' />
+    </method>
   </interface>
 
   <!--
@@ -91,6 +107,13 @@
         Runs the operation.
     -->
     <method name='Run' />
+
+    <!--
+        Cancel:
+
+        Cancel the operation.
+    -->
+    <method name='Cancel' />
 
     <!--
         GetOutput:
