@@ -24,6 +24,7 @@
 G_BEGIN_DECLS
 
 #define GNLP_INSIDE
+# include "daemon/gnlp-dbus-code.h"
 # include "daemon/gnlp-engine.h"
 # include "gnlp-context.h"
 # include "gnlp-version.h"
