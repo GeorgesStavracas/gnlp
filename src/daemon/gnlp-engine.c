@@ -77,7 +77,10 @@ static void
 gnlp_engine_init (GnlpEngine *self)
 {
   PeasEngine *engine;
+  const GList *list;
   gchar *plugin_dir;
+
+  g_debug ("Initializing the engine...");
 
   /*
    * Setup the map of name -> type. A name is composed of the extension
@@ -146,6 +149,18 @@ gnlp_engine_init (GnlpEngine *self)
   peas_engine_prepend_search_path (engine,
                                    "resource:///org/gnome/nlp/plugins",
                                    "resource:///org/gnome/nlp/plugins");
+
+  peas_engine_rescan_plugins (engine);
+
+  /* Load the discovered plugins */
+  list = peas_engine_get_plugin_list (engine);
+
+  for (; list != NULL; list = list->next)
+    {
+      g_debug ("Discovered plugin \"%s\"", peas_plugin_info_get_module_name (list->data));
+
+      peas_engine_load_plugin (engine, list->data);
+    }
 
   g_free (plugin_dir);
 }
