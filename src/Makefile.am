@@ -10,6 +10,8 @@ AM_CPPFLAGS = \
 #
 lib_LTLIBRARIES = libgnlp-@API_VERSION@.la
 
+BUILT_SOURCES =
+
 libgnlp_@API_VERSION@_la_SOURCES = \
 	$(BUILT_SOURCES) \
 	gnlp-context.c \
@@ -36,13 +38,20 @@ libgnlp_@API_VERSION@_la_LDFLAGS = \
 #
 libexec_PROGRAMS = gnlp-daemon
 
+BUILT_SOURCES += \
+    daemon/gnlp-daemon-resources.c \
+    daemon/gnlp-daemon-resources.h
+
 gnlp_daemon_SOURCES = \
+	plugins/agenda-event-parser/gnlp-agenda-event-parser-plugin.c \
 	daemon/gnlp-client-context.c \
 	daemon/gnlp-client-context.h \
 	daemon/gnlp-context-manager.c \
 	daemon/gnlp-context-manager.h \
 	daemon/gnlp-daemon.c \
 	daemon/gnlp-daemon.h \
+	daemon/gnlp-daemon-resources.c \
+	daemon/gnlp-daemon-resources.h \
 	daemon/gnlp-engine.c \
 	daemon/gnlp-engine.h \
 	daemon/main.c \
@@ -51,6 +60,7 @@ gnlp_daemon_SOURCES = \
 gnlp_daemon_CFLAGS = \
 	$(GNLP_CFLAGS) \
 	$(WARN_CFLAGS) \
+	-Wno-unused-function \
 	$(NULL)
 gnlp_daemon_LDADD = \
 	$(GNLP_LIBS) \
@@ -81,9 +91,20 @@ $(gnlp_dbus_daemon_sources) : Makefile.am daemon/org.gnome.Nlp.xml
 	daemon/org.gnome.Nlp.xml \
 	$(NULL)
 
-BUILT_SOURCES = \
+BUILT_SOURCES += \
 	$(gnlp_dbus_daemon_sources) \
 	$(NULL)
+
+#-------------------------------------------------------
+
+#
+# GResources
+#
+daemon_resources = $(shell glib-compile-resources --sourcedir=$(srcdir)/resources --generate-dependencies $(srcdir)/resources/daemon.gresource.xml)
+daemon/gnlp-daemon-resources.c: $(srcdir)/resources/daemon.gresource.xml $(daemon_resources)
+	glib-compile-resources --target=$@ --sourcedir=$(srcdir)/resources/ --generate-source --c-name gnlp $(srcdir)/resources/daemon.gresource.xml
+daemon/gnlp-daemon-resources.h: $(srcdir)/resources/daemon.gresource.xml $(daemon_resources)
+	glib-compile-resources --target=$@ --sourcedir=$(srcdir)/resources/ --generate-header --c-name gnlp $(srcdir)/resources/daemon.gresource.xml
 
 #-------------------------------------------------------
 
@@ -99,3 +120,7 @@ nobase_libgnlp_@API_VERSION@_include_HEADERS = \
 	$(NULL)
 
 -include $(top_srcdir)/git.mk
+
+CLEANFILES = \
+	$(BUILT_SOURCES) \
+	$(NULL)

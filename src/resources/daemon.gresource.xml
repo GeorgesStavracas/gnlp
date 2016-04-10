@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+  <gresource prefix="/org/gnome/nlp/plugins/agenda-event-parser">
+    <file alias="agenda-event-parser.plugin">../plugins/agenda-event-parser/agenda-event-parser.plugin</file>
+  </gresource>
+</gresources>

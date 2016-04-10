@@ -1,0 +1,9 @@
+[Plugin]
+Module=agenda-event-parser
+Name=Event Parser for Calendars
+Description=Provides a simple parser for event strings
+Authors=Georges Basile Stavracas Neto <georges.stavracas@gmail.com>
+Copyright=Copyright © 2016 Georges Basile Stavracas Neto
+Builtin=true
+Hidden=true
+Embedded=gnlp_agenda_event_parser_plugin_register_types
