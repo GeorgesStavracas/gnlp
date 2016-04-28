@@ -263,7 +263,7 @@ GList*
 gnlp_engine_list_operations (GnlpEngine  *self,
                              const gchar *language)
 {
-  GList *keys;
+  GList *keys, *retval;
 
   g_return_val_if_fail (GNLP_IS_ENGINE (self), NULL);
 
@@ -271,7 +271,7 @@ gnlp_engine_list_operations (GnlpEngine  *self,
 
   if (language)
     {
-      GList *aux, *retval;
+      GList *aux;
       gchar *language_suffix;
 
       retval = NULL;
@@ -296,7 +296,11 @@ gnlp_engine_list_operations (GnlpEngine  *self,
     }
   else
     {
-      return g_list_copy_deep (keys, string_copy, NULL);
+      retval = g_list_copy_deep (keys, string_copy, NULL);
+
+      g_list_free (keys);
+
+      return retval;
     }
 }
 
