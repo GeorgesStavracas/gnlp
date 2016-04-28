@@ -85,6 +85,13 @@
     <property name="Id" type="s" access="read" />
 
     <!--
+        ExtensionName:
+
+        The extension that this operation wraps.
+    -->
+    <property name="ExtensionName" type="s" access="read" />
+
+    <!--
         Status:
 
         Status of the operations.
