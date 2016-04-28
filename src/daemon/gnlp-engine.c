@@ -194,6 +194,7 @@ gnlp_engine_register_operation (GnlpEngine  *self,
   gchar *extended_name;
 
   g_return_if_fail (GNLP_IS_ENGINE (self));
+  g_return_if_fail (g_type_is_a (type, GNLP_TYPE_OPERATION));
   g_return_if_fail (strstr (name, "::") == NULL);
 
   extended_name = language ? g_strdup_printf ("%s::%s", name, language) : g_strdup (name);
@@ -225,6 +226,7 @@ gnlp_engine_unregister_operation (GnlpEngine *self,
   gpointer key, value;
 
   g_return_if_fail (GNLP_IS_ENGINE (self));
+  g_return_if_fail (g_type_is_a (type, GNLP_TYPE_OPERATION));
 
   g_hash_table_iter_init (&iter, self->name_to_type);
 
@@ -296,4 +298,48 @@ gnlp_engine_list_operations (GnlpEngine  *self,
     {
       return g_list_copy_deep (keys, string_copy, NULL);
     }
+}
+
+/**
+ * gnlp_engine_create_operation:
+ * @self: a #GnlpEngine
+ * @name: the name of the extension
+ * @language: (nullable): the language for the given extension
+ *
+ * Creates an instance of extension named @name for the @language
+ * specified. If no extension is registered for this specific
+ * language, create a generic extension.
+ *
+ * Returns: (transfer full): a #GnlpOperation
+ */
+GnlpOperation*
+gnlp_engine_create_operation (GnlpEngine  *self,
+                              const gchar *name,
+                              const gchar *language)
+{
+  GnlpOperation *operation;
+  GType type;
+  gchar *extended_name;
+
+  operation = NULL;
+  extended_name = language ? g_strdup_printf ("%s::%s", name, language) : g_strdup (name);
+
+  if (g_hash_table_contains (self->name_to_type, extended_name))
+    {
+      /* Search for the extension for the specific language first */
+      type = GPOINTER_TO_INT (g_hash_table_lookup (self->name_to_type, extended_name));
+      operation = g_object_new (type, NULL);
+    }
+  else if (language && g_hash_table_contains (self->name_to_type, name))
+    {
+      /* If we didn't find any extension for that specific language,
+       * search for a generic extension
+       */
+      type = GPOINTER_TO_INT (g_hash_table_lookup (self->name_to_type, name));
+      operation = g_object_new (type, NULL);
+    }
+
+  g_free (extended_name);
+
+  return operation;
 }

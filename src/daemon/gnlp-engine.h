@@ -19,6 +19,8 @@
 #ifndef GNLP_ENGINE_H
 #define GNLP_ENGINE_H
 
+#include "gnlp-dbus-code.h"
+
 #include <glib-object.h>
 
 G_BEGIN_DECLS
@@ -40,9 +42,9 @@ void                 gnlp_engine_unregister_operation            (GnlpEngine    
 GList*               gnlp_engine_list_operations                 (GnlpEngine         *self,
                                                                   const gchar        *language);
 
-//GnlpExtension*      gnlp_engine_create_operation                (GnlpEngine         *self,
-//                                                                 const gchar        *name,
-//                                                                 const gchar        *language);
+GnlpOperation*       gnlp_engine_create_operation                (GnlpEngine         *self,
+                                                                  const gchar        *name,
+                                                                  const gchar        *language);
 
 G_END_DECLS
 
