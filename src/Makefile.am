@@ -42,8 +42,14 @@ BUILT_SOURCES += \
     daemon/gnlp-daemon-resources.c \
     daemon/gnlp-daemon-resources.h
 
-gnlp_daemon_SOURCES = \
+PLUGIN_FILES = \
+	plugins/agenda-event-parser/gnlp-agenda-event-parser-generic.c \
+	plugins/agenda-event-parser/gnlp-agenda-event-parser-generic.h \
 	plugins/agenda-event-parser/gnlp-agenda-event-parser-plugin.c \
+	$(NULL)
+
+gnlp_daemon_SOURCES = \
+	$(PLUGIN_FILES) \
 	daemon/gnlp-client-context.c \
 	daemon/gnlp-client-context.h \
 	daemon/gnlp-context-manager.c \

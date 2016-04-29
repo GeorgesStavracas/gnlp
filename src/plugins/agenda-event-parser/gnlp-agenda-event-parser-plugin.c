@@ -16,9 +16,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#define G_LOG_DOMAIN "Plugin"
+
 #include <glib-object.h>
 #include <libpeas/peas.h>
+#include "gnlp.h"
 #include "gnlp-engine.h"
+#include "gnlp-agenda-event-parser-generic.h"
 
 #define GNLP_TYPE_AGENDA_EVENT_PARSER_PLUGIN (gnlp_agenda_event_parser_plugin_get_type())
 
@@ -58,13 +62,20 @@ enum
 static void
 gnlp_agenda_event_parser_plugin_activate (PeasActivatable *activatable)
 {
-  // TODO: implement a parser and register
+  GnlpAgendaEventParserPlugin *self = GNLP_AGENDA_EVENT_PARSER_PLUGIN (activatable);
+
+  gnlp_engine_register_operation (self->engine,
+                                  GNLP_BUILTIN_AGENDA_EVENT_PARSER,
+                                  NULL,
+                                  GNLP_TYPE_AGENDA_EVENT_PARSER_GENERIC);
 }
 
 static void
 gnlp_agenda_event_parser_plugin_deactivate (PeasActivatable *activatable)
 {
-  // TODO: unregister parser
+  GnlpAgendaEventParserPlugin *self = GNLP_AGENDA_EVENT_PARSER_PLUGIN (activatable);
+
+  gnlp_engine_unregister_operation (self->engine, GNLP_TYPE_AGENDA_EVENT_PARSER_GENERIC);
 }
 
 static void

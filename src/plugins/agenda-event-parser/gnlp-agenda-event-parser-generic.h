@@ -1,4 +1,4 @@
-/* gnlp.h
+/* gnlp-agenda-event-parser-generic.h
  *
  * Copyright (C) 2016 Georges Basile Stavracas Neto <georges.stavracas@gmail.com>
  *
@@ -16,24 +16,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GNLP_H
-#define GNLP_H
+#ifndef GNLP_AGENDA_EVENT_PARSER_GENERIC_H
+#define GNLP_AGENDA_EVENT_PARSER_GENERIC_H
 
-#include <glib.h>
+#include "../daemon/gnlp-dbus-code.h"
+
+#include <glib-object.h>
 
 G_BEGIN_DECLS
 
-#define GNLP_INSIDE
+#define GNLP_TYPE_AGENDA_EVENT_PARSER_GENERIC (gnlp_agenda_event_parser_generic_get_type())
 
-/* Built-in plugins */
-#define   GNLP_BUILTIN_AGENDA_EVENT_PARSER                       "agenda-event-parser"
+G_DECLARE_FINAL_TYPE (GnlpAgendaEventParserGeneric, gnlp_agenda_event_parser_generic, GNLP, AGENDA_EVENT_PARSER_GENERIC, GObject)
 
-# include "daemon/gnlp-dbus-code.h"
-# include "daemon/gnlp-engine.h"
-# include "gnlp-context.h"
-# include "gnlp-version.h"
-#undef GNLP_INSIDE
+GnlpOperation*       gnlp_agenda_event_parser_generic_new        (void);
 
 G_END_DECLS
 
-#endif /* GNLP_H */
+#endif /* GNLP_AGENDA_EVENT_PARSER_GENERIC_H */
+
