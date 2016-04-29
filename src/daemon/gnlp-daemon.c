@@ -16,6 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#define G_LOG_DOMAIN "Daemon"
+
 #include "gnlp-context-manager.h"
 #include "gnlp-daemon.h"
 #include "gnlp-dbus-code.h"
