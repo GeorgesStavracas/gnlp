@@ -199,9 +199,9 @@ gnlp_engine_register_operation (GnlpEngine  *self,
 
   extended_name = language ? g_strdup_printf ("%s::%s", name, language) : g_strdup (name);
 
-  g_hash_table_insert (self->name_to_type, extended_name, GINT_TO_POINTER (type));
+  g_debug ("Registering operation '%s'", extended_name);
 
-  g_free (extended_name);
+  g_hash_table_insert (self->name_to_type, extended_name, GINT_TO_POINTER (type));
 }
 
 /**
