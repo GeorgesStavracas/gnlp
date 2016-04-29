@@ -40,9 +40,23 @@ list_operations_cb (GObject      *source,
 {
   Context *data = user_data;
   GError *error = NULL;
+  GList *operations, *l;
 
+  operations = gnlp_context_list_operations_finish (result, &error);
+
+  g_assert (!error);
+
+  if (error)
+    {
+      g_warning ("Error listing operations: %s", error->message);
+      g_clear_error (&error);
+      goto out;
+    }
+
+out:
   g_main_loop_quit (data->mainloop);
   g_clear_object (&data->context);
+  g_clear_pointer (&operations, g_list_free);
   g_clear_pointer (&data, g_free);
 }
 
