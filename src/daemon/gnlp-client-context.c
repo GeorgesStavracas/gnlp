@@ -146,5 +146,3 @@ gnlp_client_context_create_operation (GnlpClientContext *self,
 
   return g_strdup ("test");
 }
-
-//plugins/agenda-event-parser/gnlp-agenda-event-parser-plugin.c

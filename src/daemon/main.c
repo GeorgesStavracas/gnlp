@@ -26,7 +26,6 @@ main (gint   argc,
 {
   GnlpDaemon *daemon;
 
-  g_set_prgname ("gnlp-daemon");
   g_set_application_name ("Gnlp Daemon");
 
   daemon = gnlp_daemon_new ();

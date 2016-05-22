@@ -1,4 +1,4 @@
-/* gnlp-daemon.h
+/* gnlp-operation-capsule.h
  *
  * Copyright (C) 2016 Georges Basile Stavracas Neto <georges.stavracas@gmail.com>
  *
@@ -16,28 +16,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GNLP_DAEMON_H
-#define GNLP_DAEMON_H
+#ifndef GNLP_OPERATION_CAPSULE_H
+#define GNLP_OPERATION_CAPSULE_H
 
-#include <gio/gio.h>
-#include <glib.h>
+#include "gnlp-dbus-code.h"
+
 #include <glib-object.h>
 
 G_BEGIN_DECLS
 
-#define GNLP_TYPE_DAEMON (gnlp_daemon_get_type())
+#define GNLP_TYPE_OPERATION_CAPSULE (gnlp_operation_capsule_get_type())
 
-typedef enum
-{
-  GNLP_DAEMON_MODE_PRIMARY,
-  GNLP_DAEMON_MODE_WORKER
-} GnlpDaemonMode;
+G_DECLARE_FINAL_TYPE (GnlpOperationCapsule, gnlp_operation_capsule, GNLP, OPERATION_CAPSULE, GObject)
 
-G_DECLARE_FINAL_TYPE (GnlpDaemon, gnlp_daemon, GNLP, DAEMON, GApplication)
-
-GnlpDaemon*          gnlp_daemon_new                             (void);
+GnlpOperationCapsule* gnlp_operation_capsule_new                 (GnlpOperation      *extension,
+                                                                  GnlpOperation      *skeleton);
 
 G_END_DECLS
 
-#endif /* GNLP_DAEMON_H */
+#endif /* GNLP_OPERATION_CAPSULE_H */
 

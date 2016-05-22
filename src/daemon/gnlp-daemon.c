@@ -18,10 +18,15 @@
 
 #define G_LOG_DOMAIN "Daemon"
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 #include "gnlp-context-manager.h"
 #include "gnlp-daemon.h"
 #include "gnlp-dbus-code.h"
 #include "gnlp-engine.h"
+#include "gnlp-operation-capsule.h"
 
 struct _GnlpDaemon
 {
@@ -29,6 +34,9 @@ struct _GnlpDaemon
 
   GnlpEngine         *engine;
   GnlpManager        *manager;
+
+  GHashTable         *path_to_capsule;
+
   GnlpContextManager *context_manager;
   GDBusObjectManagerServer *object_manager;
 };
@@ -119,9 +127,11 @@ handle_create_operation (GnlpManager           *manager,
                          const gchar           *application_id,
                          GnlpDaemon            *daemon)
 {
+  GnlpOperationCapsule *capsule;
   GnlpClientContext *client_context;
   GnlpObjectSkeleton *skeleton;
-  GnlpOperation *operation;
+  GnlpOperation *skeleton_operation;
+  GnlpOperation *extension_operation;
   gchar *operation_id;
   gchar *object_path;
 
@@ -147,11 +157,40 @@ handle_create_operation (GnlpManager           *manager,
                                  application_id,
                                  operation_id);
 
-  /* Export the operation */
-  operation = gnlp_operation_skeleton_new ();
+  /*
+   * Setup the pair (extension, skeleton). The skeleton handles the
+   * DBus signals, and the extension is the plugin-implemented operation.
+   */
+  extension_operation = gnlp_engine_create_operation (daemon->engine, name, language);
 
+  if (!extension_operation)
+    {
+      gnlp_manager_complete_create_operation (manager,
+                                              invocation,
+                                              NULL,
+                                              FALSE);
+
+      return TRUE;
+    }
+
+  skeleton_operation = gnlp_operation_skeleton_new ();
+
+  /*
+   * The operation capsule will connect the GnlpOperation signals and
+   * handle the skeleton <-> plugin extension communication.
+   */
+  capsule = gnlp_operation_capsule_new (extension_operation, skeleton_operation);
+
+  g_hash_table_insert (daemon->path_to_capsule, object_path, capsule);
+
+  g_signal_connect (capsule,
+                    "finalized",
+                    NULL,
+                    daemon);
+
+  /* Export the operation */
   skeleton = gnlp_object_skeleton_new (object_path);
-  gnlp_object_skeleton_set_operation (skeleton, operation);
+  gnlp_object_skeleton_set_operation (skeleton, skeleton_operation);
 
   g_dbus_object_manager_server_export (daemon->object_manager, G_DBUS_OBJECT_SKELETON (skeleton));
 
@@ -159,6 +198,9 @@ handle_create_operation (GnlpManager           *manager,
                                           invocation,
                                           operation_id,
                                           TRUE);
+
+  g_clear_object (&extension_operation);
+  g_clear_object (&skeleton_operation);
 
   return TRUE;
 }
@@ -271,6 +313,10 @@ gnlp_daemon_init (GnlpDaemon *self)
 {
   self->engine = gnlp_engine_new ();
   self->context_manager = gnlp_context_manager_new (self->engine);
+  self->path_to_capsule = g_hash_table_new_full (g_str_hash,
+                                                 g_str_equal,
+                                                 g_free,
+                                                 g_object_unref);
 }
 
 GnlpDaemon*

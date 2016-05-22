@@ -22,6 +22,8 @@ struct _GnlpAgendaEventParserGeneric
 {
   GObject             parent;
 
+  GCancellable       *cancellable;
+
   GRegex             *regex;
   gchar              *text;
 };
@@ -41,9 +43,32 @@ enum
 
 static GParamSpec *properties [N_PROPS];
 
+static gboolean
+gnlp_agenda_event_parser_generic_handle_cancel (GnlpOperation         *operation,
+                                                GDBusMethodInvocation *method)
+{
+  GnlpAgendaEventParserGeneric *self = GNLP_AGENDA_EVENT_PARSER_GENERIC (operation);
+
+  g_cancellable_cancel (self->cancellable);
+
+  return TRUE;
+}
+
+static gboolean
+gnlp_agenda_event_parser_generic_handle_get_output (GnlpOperation         *operation,
+                                                    GDBusMethodInvocation *method)
+{
+  GnlpAgendaEventParserGeneric *self = GNLP_AGENDA_EVENT_PARSER_GENERIC (operation);
+
+  g_cancellable_cancel (self->cancellable);
+
+  return TRUE;
+}
+
 static void
 gnlp_agenda_event_parser_generic_operation_init (GnlpOperationIface *iface)
 {
+  iface->handle_cancel = gnlp_agenda_event_parser_generic_handle_cancel;
   // TODO
 }
 
@@ -52,7 +77,10 @@ gnlp_agenda_event_parser_generic_finalize (GObject *object)
 {
   GnlpAgendaEventParserGeneric *self = (GnlpAgendaEventParserGeneric *)object;
 
+  g_cancellable_cancel (self->cancellable);
+
   g_clear_pointer (&self->text, g_free);
+  g_clear_object (&self->cancellable);
 
   G_OBJECT_CLASS (gnlp_agenda_event_parser_generic_parent_class)->finalize (object);
 }
@@ -123,6 +151,7 @@ gnlp_agenda_event_parser_generic_class_init (GnlpAgendaEventParserGenericClass *
 static void
 gnlp_agenda_event_parser_generic_init (GnlpAgendaEventParserGeneric *self)
 {
+  self->cancellable = g_cancellable_new ();
 }
 
 GnlpOperation*
