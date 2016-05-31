@@ -60,6 +60,8 @@ gnlp_daemon_SOURCES = \
 	daemon/gnlp-daemon-resources.h \
 	daemon/gnlp-engine.c \
 	daemon/gnlp-engine.h \
+	daemon/gnlp-extension.c \
+	daemon/gnlp-extension.h \
 	daemon/gnlp-operation-capsule.c \
 	daemon/gnlp-operation-capsule.h \
 	daemon/main.c \
