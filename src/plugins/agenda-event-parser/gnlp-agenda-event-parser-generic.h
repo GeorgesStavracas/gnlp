@@ -19,7 +19,7 @@
 #ifndef GNLP_AGENDA_EVENT_PARSER_GENERIC_H
 #define GNLP_AGENDA_EVENT_PARSER_GENERIC_H
 
-#include "../daemon/gnlp-dbus-code.h"
+#include "gnlp.h"
 
 #include <glib-object.h>
 

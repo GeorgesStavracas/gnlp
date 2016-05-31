@@ -28,11 +28,11 @@ struct _GnlpAgendaEventParserGeneric
   gchar              *text;
 };
 
-static void          gnlp_agenda_event_parser_generic_operation_init (GnlpOperationIface *iface);
+static void          gnlp_agenda_event_parser_generic_extension_init (GnlpExtensionInterface *iface);
 
 G_DEFINE_TYPE_WITH_CODE (GnlpAgendaEventParserGeneric, gnlp_agenda_event_parser_generic, G_TYPE_OBJECT,
-                         G_IMPLEMENT_INTERFACE (GNLP_TYPE_OPERATION,
-                                                gnlp_agenda_event_parser_generic_operation_init))
+                         G_IMPLEMENT_INTERFACE (GNLP_TYPE_EXTENSION,
+                                                gnlp_agenda_event_parser_generic_extension_init))
 
 enum
 {
@@ -44,21 +44,12 @@ enum
 static GParamSpec *properties [N_PROPS];
 
 static gboolean
-gnlp_agenda_event_parser_generic_handle_cancel (GnlpOperation         *operation,
-                                                GDBusMethodInvocation *method)
+gnlp_agenda_event_parser_generic_cancel (GnlpExtension *operation)
 {
   GnlpAgendaEventParserGeneric *self = GNLP_AGENDA_EVENT_PARSER_GENERIC (operation);
 
-  g_cancellable_cancel (self->cancellable);
-
-  return TRUE;
-}
-
-static gboolean
-gnlp_agenda_event_parser_generic_handle_get_output (GnlpOperation         *operation,
-                                                    GDBusMethodInvocation *method)
-{
-  GnlpAgendaEventParserGeneric *self = GNLP_AGENDA_EVENT_PARSER_GENERIC (operation);
+  if (!self->cancellable)
+    return FALSE;
 
   g_cancellable_cancel (self->cancellable);
 
@@ -66,10 +57,9 @@ gnlp_agenda_event_parser_generic_handle_get_output (GnlpOperation         *opera
 }
 
 static void
-gnlp_agenda_event_parser_generic_operation_init (GnlpOperationIface *iface)
+gnlp_agenda_event_parser_generic_extension_init (GnlpExtensionInterface *iface)
 {
-  iface->handle_cancel = gnlp_agenda_event_parser_generic_handle_cancel;
-  // TODO
+  iface->cancel = gnlp_agenda_event_parser_generic_cancel;
 }
 
 static void

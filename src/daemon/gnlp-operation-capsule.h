@@ -20,6 +20,7 @@
 #define GNLP_OPERATION_CAPSULE_H
 
 #include "gnlp-dbus-code.h"
+#include "gnlp-extension.h"
 
 #include <glib-object.h>
 
@@ -29,7 +30,7 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (GnlpOperationCapsule, gnlp_operation_capsule, GNLP, OPERATION_CAPSULE, GObject)
 
-GnlpOperationCapsule* gnlp_operation_capsule_new                 (GnlpOperation      *extension,
+GnlpOperationCapsule* gnlp_operation_capsule_new                 (GnlpExtension      *extension,
                                                                   GnlpOperation      *skeleton);
 
 G_END_DECLS

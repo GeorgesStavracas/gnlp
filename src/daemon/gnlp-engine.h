@@ -20,6 +20,7 @@
 #define GNLP_ENGINE_H
 
 #include "gnlp-dbus-code.h"
+#include "gnlp-extension.h"
 
 #include <glib-object.h>
 
@@ -31,18 +32,18 @@ G_DECLARE_FINAL_TYPE (GnlpEngine, gnlp_engine, GNLP, ENGINE, GObject)
 
 GnlpEngine*          gnlp_engine_new                             (void);
 
-void                 gnlp_engine_register_operation              (GnlpEngine         *self,
+void                 gnlp_engine_register_extension              (GnlpEngine         *self,
                                                                   const gchar        *name,
                                                                   const gchar        *language,
                                                                   GType               type);
 
-void                 gnlp_engine_unregister_operation            (GnlpEngine         *self,
+void                 gnlp_engine_unregister_extension            (GnlpEngine         *self,
                                                                   GType               type);
 
-GList*               gnlp_engine_list_operations                 (GnlpEngine         *self,
+GList*               gnlp_engine_list_extensions                 (GnlpEngine         *self,
                                                                   const gchar        *language);
 
-GnlpOperation*       gnlp_engine_create_operation                (GnlpEngine         *self,
+GnlpExtension*       gnlp_engine_create_extension                (GnlpEngine         *self,
                                                                   const gchar        *name,
                                                                   const gchar        *language);
 

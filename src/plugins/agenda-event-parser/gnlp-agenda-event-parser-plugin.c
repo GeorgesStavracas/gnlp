@@ -64,7 +64,7 @@ gnlp_agenda_event_parser_plugin_activate (PeasActivatable *activatable)
 {
   GnlpAgendaEventParserPlugin *self = GNLP_AGENDA_EVENT_PARSER_PLUGIN (activatable);
 
-  gnlp_engine_register_operation (self->engine,
+  gnlp_engine_register_extension (self->engine,
                                   GNLP_BUILTIN_AGENDA_EVENT_PARSER,
                                   NULL,
                                   GNLP_TYPE_AGENDA_EVENT_PARSER_GENERIC);
@@ -75,7 +75,7 @@ gnlp_agenda_event_parser_plugin_deactivate (PeasActivatable *activatable)
 {
   GnlpAgendaEventParserPlugin *self = GNLP_AGENDA_EVENT_PARSER_PLUGIN (activatable);
 
-  gnlp_engine_unregister_operation (self->engine, GNLP_TYPE_AGENDA_EVENT_PARSER_GENERIC);
+  gnlp_engine_unregister_extension (self->engine, GNLP_TYPE_AGENDA_EVENT_PARSER_GENERIC);
 }
 
 static void

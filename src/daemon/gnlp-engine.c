@@ -86,7 +86,7 @@ gnlp_engine_init (GnlpEngine *self)
 
   /*
    * Setup the map of name -> type. A name is composed of the extension
-   * operation and a language, in the form of <operation name>::<language>.
+   * extension and a language, in the form of <extension name>::<language>.
    * Therefore, the extension name should not contain '::' in it' name.
    */
   self->name_to_type = g_hash_table_new_full (g_str_hash,
@@ -174,21 +174,21 @@ gnlp_engine_new (void)
 }
 
 /**
- * gnlp_engine_register_operation:
+ * gnlp_engine_register_extension:
  * @self: a #GnlpEngine
- * @name: the name of the operation. It must not contain '::'.
- * @language: (nullable): the specialized language this operation applies.
+ * @name: the name of the extension. It must not contain '::'.
+ * @language: (nullable): the specialized language this extension applies.
  * @type: a #GType
  *
- * Registers an operation named @name for @language. When searching for
- * operations, #GnlpEngine first tries to match <operation name>::<language>,
- * then only <operation name>. Because of that, it is strictly forbiden to
+ * Registers an extension named @name for @language. When searching for
+ * extensions, #GnlpEngine first tries to match <extension name>::<language>,
+ * then only <extension name>. Because of that, it is strictly forbiden to
  * pass '::' in @name.
  *
  * Since: 0.1.0
  */
 void
-gnlp_engine_register_operation (GnlpEngine  *self,
+gnlp_engine_register_extension (GnlpEngine  *self,
                                 const gchar *name,
                                 const gchar *language,
                                 GType        type)
@@ -196,39 +196,39 @@ gnlp_engine_register_operation (GnlpEngine  *self,
   gchar *extended_name;
 
   g_return_if_fail (GNLP_IS_ENGINE (self));
-  g_return_if_fail (g_type_is_a (type, GNLP_TYPE_OPERATION));
+  g_return_if_fail (g_type_is_a (type, GNLP_TYPE_EXTENSION));
   g_return_if_fail (strstr (name, "::") == NULL);
 
   extended_name = language ? g_strdup_printf ("%s::%s", name, language) : g_strdup (name);
 
-  g_debug ("Registering operation '%s'", extended_name);
+  g_debug ("Registering extension '%s'", extended_name);
 
   g_hash_table_insert (self->name_to_type, extended_name, GINT_TO_POINTER (type));
 }
 
 /**
- * gnlp_engine_unregister_operation:
+ * gnlp_engine_unregister_extension:
  * @self: a #GnlpEngine
- * @name: the name of the operation. It must not contain '::'.
- * @language: (nullable): the specialized language this operation applies.
+ * @name: the name of the extension. It must not contain '::'.
+ * @language: (nullable): the specialized language this extension applies.
  * @type: a #GType
  *
- * Registers an operation named @name for @language. When searching for
- * operations, #GnlpEngine first tries to match <operation name>::<language>,
- * then only <operation name>. Because of that, it is strictly forbiden to
+ * Unregisters an extension named @name for @language. When searching for
+ * extensions, #GnlpEngine first tries to match <extension name>::<language>,
+ * then only <extension name>. Because of that, it is strictly forbiden to
  * pass '::' in @name.
  *
  * Since: 0.1.0
  */
 void
-gnlp_engine_unregister_operation (GnlpEngine *self,
+gnlp_engine_unregister_extension (GnlpEngine *self,
                                   GType       type)
 {
   GHashTableIter iter;
   gpointer key, value;
 
   g_return_if_fail (GNLP_IS_ENGINE (self));
-  g_return_if_fail (g_type_is_a (type, GNLP_TYPE_OPERATION));
+  g_return_if_fail (g_type_is_a (type, GNLP_TYPE_EXTENSION));
 
   g_hash_table_iter_init (&iter, self->name_to_type);
 
@@ -247,22 +247,22 @@ gnlp_engine_unregister_operation (GnlpEngine *self,
 }
 
 /**
- * gnlp_engine_list_operations:
+ * gnlp_engine_list_extensions:
  * @self: a #GnlpEngine
  * @language: (nullable): the desired language.
  *
- * List the currently available operations. If @language is set, it fetches
- * the list of operations for that specific language, i.e. ignores generic
- * operations.
+ * List the currently available extensions. If @language is set, it fetches
+ * the list of extensions for that specific language, i.e. ignores generic
+ * extensions.
  *
  * Returns: (element-type utf8) (transfer full): the list of the currently
- * registered operations. Free the list with g_list_free_full() and pass
+ * registered extensions. Free the list with g_list_free_full() and pass
  * g_free() to free the strings.
  *
  * Since: 0.1.0
  */
 GList*
-gnlp_engine_list_operations (GnlpEngine  *self,
+gnlp_engine_list_extensions (GnlpEngine  *self,
                              const gchar *language)
 {
   GList *keys, *retval;
@@ -307,7 +307,7 @@ gnlp_engine_list_operations (GnlpEngine  *self,
 }
 
 /**
- * gnlp_engine_create_operation:
+ * gnlp_engine_create_extension:
  * @self: a #GnlpEngine
  * @name: the name of the extension
  * @language: (nullable): the language for the given extension
@@ -316,25 +316,25 @@ gnlp_engine_list_operations (GnlpEngine  *self,
  * specified. If no extension is registered for this specific
  * language, create a generic extension.
  *
- * Returns: (transfer full): a #GnlpOperation
+ * Returns: (transfer full): a #GnlpExtension
  */
-GnlpOperation*
-gnlp_engine_create_operation (GnlpEngine  *self,
+GnlpExtension*
+gnlp_engine_create_extension (GnlpEngine  *self,
                               const gchar *name,
                               const gchar *language)
 {
-  GnlpOperation *operation;
+  GnlpExtension *extension;
   GType type;
   gchar *extended_name;
 
-  operation = NULL;
+  extension = NULL;
   extended_name = language ? g_strdup_printf ("%s::%s", name, language) : g_strdup (name);
 
   if (g_hash_table_contains (self->name_to_type, extended_name))
     {
       /* Search for the extension for the specific language first */
       type = GPOINTER_TO_INT (g_hash_table_lookup (self->name_to_type, extended_name));
-      operation = g_object_new (type, NULL);
+      extension = g_object_new (type, NULL);
     }
   else if (language && g_hash_table_contains (self->name_to_type, name))
     {
@@ -342,10 +342,10 @@ gnlp_engine_create_operation (GnlpEngine  *self,
        * search for a generic extension
        */
       type = GPOINTER_TO_INT (g_hash_table_lookup (self->name_to_type, name));
-      operation = g_object_new (type, NULL);
+      extension = g_object_new (type, NULL);
     }
 
   g_free (extended_name);
 
-  return operation;
+  return extension;
 }

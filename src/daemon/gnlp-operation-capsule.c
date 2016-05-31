@@ -22,7 +22,7 @@ struct _GnlpOperationCapsule
 {
   GObject             parent;
 
-  GnlpOperation      *extension;
+  GnlpExtension      *extension;
   GnlpOperation      *skeleton;
 };
 
@@ -122,7 +122,7 @@ gnlp_operation_capsule_class_init (GnlpOperationCapsuleClass *klass)
   properties[PROP_EXTENSION] = g_param_spec_object ("extension",
                                                     "Extension",
                                                     "The extension of this capsule",
-                                                    GNLP_TYPE_OPERATION,
+                                                    GNLP_TYPE_EXTENSION,
                                                     G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY);
 
 
@@ -139,7 +139,7 @@ gnlp_operation_capsule_init (GnlpOperationCapsule *self)
 }
 
 GnlpOperationCapsule*
-gnlp_operation_capsule_new (GnlpOperation *extension,
+gnlp_operation_capsule_new (GnlpExtension *extension,
                             GnlpOperation *skeleton)
 {
   return g_object_new (GNLP_TYPE_OPERATION_CAPSULE,

@@ -87,7 +87,7 @@ handle_list_operations (GnlpManager           *manager,
                         const gchar           *language,
                         GnlpDaemon            *daemon)
 {
-  GList *operations, *aux;
+  GList *extensions, *aux;
   gchar **array;
   gint index;
 
@@ -97,13 +97,13 @@ handle_list_operations (GnlpManager           *manager,
 
   g_debug ("Looking up operations for language '%s'", language);
 
-  operations = gnlp_engine_list_operations (daemon->engine, language);
+  extensions = gnlp_engine_list_extensions (daemon->engine, language);
 
   /* Setup the array from the GList */
-  array = g_new0 (gchar*, g_list_length (operations) + 1);
+  array = g_new0 (gchar*, g_list_length (extensions) + 1);
   index = 0;
 
-  for (aux = operations; aux != NULL; aux = aux->next)
+  for (aux = extensions; aux != NULL; aux = aux->next)
     {
       array[index] = g_strdup (aux->data);
       index++;
@@ -113,7 +113,7 @@ handle_list_operations (GnlpManager           *manager,
                                          invocation,
                                          (const gchar* const*) array);
 
-  g_list_free_full (operations, g_free);
+  g_list_free_full (extensions, g_free);
   g_strfreev (array);
 
   return TRUE;
@@ -131,7 +131,7 @@ handle_create_operation (GnlpManager           *manager,
   GnlpClientContext *client_context;
   GnlpObjectSkeleton *skeleton;
   GnlpOperation *skeleton_operation;
-  GnlpOperation *extension_operation;
+  GnlpExtension *extension;
   gchar *operation_id;
   gchar *object_path;
 
@@ -161,9 +161,9 @@ handle_create_operation (GnlpManager           *manager,
    * Setup the pair (extension, skeleton). The skeleton handles the
    * DBus signals, and the extension is the plugin-implemented operation.
    */
-  extension_operation = gnlp_engine_create_operation (daemon->engine, name, language);
+  extension = gnlp_engine_create_extension (daemon->engine, name, language);
 
-  if (!extension_operation)
+  if (!extension)
     {
       gnlp_manager_complete_create_operation (manager,
                                               invocation,
@@ -179,7 +179,7 @@ handle_create_operation (GnlpManager           *manager,
    * The operation capsule will connect the GnlpOperation signals and
    * handle the skeleton <-> plugin extension communication.
    */
-  capsule = gnlp_operation_capsule_new (extension_operation, skeleton_operation);
+  capsule = gnlp_operation_capsule_new (extension, skeleton_operation);
 
   g_hash_table_insert (daemon->path_to_capsule, object_path, capsule);
 
@@ -199,8 +199,8 @@ handle_create_operation (GnlpManager           *manager,
                                           operation_id,
                                           TRUE);
 
-  g_clear_object (&extension_operation);
   g_clear_object (&skeleton_operation);
+  g_clear_object (&extension);
 
   return TRUE;
 }
