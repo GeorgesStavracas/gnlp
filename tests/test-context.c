@@ -23,107 +23,77 @@
 typedef enum
 {
   ACQUIRE_CONTEXT,
-  LIST_OPERATIONS
+  LIST_OPERATIONS,
+  EVENT_PARSER
 } TestOperation;
 
 typedef struct
 {
-  GMainLoop     *mainloop;
   GnlpContext   *context;
   TestOperation  operation;
 } Context;
 
 static void
-list_operations_cb (GObject      *source,
-                    GAsyncResult *result,
-                    gpointer      user_data)
+real_event_parser (Context *data)
 {
-  Context *data = user_data;
+  GnlpOperation *operation;
   GError *error = NULL;
-  GList *operations, *l;
 
-  operations = gnlp_context_list_operations_finish (result, &error);
+  operation = gnlp_context_create_operation_sync (data->context,
+                                                  GNLP_BUILTIN_AGENDA_EVENT_PARSER,
+                                                  "en_US",
+                                                  NULL,
+                                                  &error);
 
   g_assert (!error);
-
-  if (error)
-    {
-      g_warning ("Error listing operations: %s", error->message);
-      g_clear_error (&error);
-      goto out;
-    }
-
-out:
-  g_main_loop_quit (data->mainloop);
-  g_clear_object (&data->context);
-  g_clear_pointer (&operations, g_list_free);
-  g_clear_pointer (&data, g_free);
 }
 
 static void
-context_acquire_cb (GObject      *source,
-                    GAsyncResult *result,
-                    gpointer      user_data)
+real_list_operations (Context *data)
 {
-  Context *data = user_data;
   GError *error = NULL;
+  GList *operations, *l;
 
-  data->context = gnlp_context_new_finish (result, &error);
-
+  gnlp_context_list_operations_sync (data->context,
+                                     NULL,
+                                     NULL,
+                                     &error);
   g_assert (!error);
-
-  if (error)
-    {
-      g_warning ("Error acquiring context: %s", error->message);
-      g_clear_error (&error);
-    }
-
-  /* Run the desired operation here */
-  switch (data->operation)
-    {
-    case ACQUIRE_CONTEXT:
-      g_main_loop_quit (data->mainloop);
-      g_clear_object (&data->context);
-      g_clear_pointer (&data, g_free);
-      break;
-
-    case LIST_OPERATIONS:
-      gnlp_context_list_operations (data->context,
-                                    NULL,
-                                    NULL,
-                                    list_operations_cb,
-                                    data);
-
-      gnlp_context_list_operations (data->context,
-                                    "en_US",
-                                    NULL,
-                                    list_operations_cb,
-                                    data);
-      break;
-
-    default:
-      g_assert_not_reached ();
-    }
 }
 
 static void
 run_operation (TestOperation operation)
 {
   Context *data;
-  GMainLoop *mainloop;
-
-  mainloop = g_main_loop_new (NULL, FALSE);
+  GError *error = NULL;
 
   data = g_new0 (Context, 1);
-  data->mainloop = mainloop;
   data->operation = operation;
 
   /* Starts retrieving the GnlpContext */
-  gnlp_context_new ("test-context", NULL, context_acquire_cb, data);
+  data->context = gnlp_context_new_sync ("test-context", NULL, &error);
+  g_assert (!error);
 
-  g_main_loop_run (mainloop);
+  /* Run the desired operation here */
+  switch (data->operation)
+    {
+    case ACQUIRE_CONTEXT:
+      break;
 
-  g_clear_pointer (&mainloop, g_main_loop_unref);
+    case LIST_OPERATIONS:
+      real_list_operations (data);
+      break;
+
+    case EVENT_PARSER:
+      real_event_parser (data);
+      break;
+
+    default:
+      g_assert_not_reached ();
+    }
+
+  g_clear_object (&data->context);
+  g_clear_pointer (&data, g_free);
 }
 
 static void
@@ -138,6 +108,12 @@ list_operations (void)
   run_operation (LIST_OPERATIONS);
 }
 
+static void
+event_parser (void)
+{
+  run_operation (EVENT_PARSER);
+}
+
 gint
 main (gint   argc,
       gchar *argv[])
@@ -146,6 +122,7 @@ main (gint   argc,
 
   g_test_add_func ("/context/acquire_context", acquire_context);
   g_test_add_func ("/context/list_operations", list_operations);
+  g_test_add_func ("/context/event_parser", event_parser);
 
   return g_test_run ();
 }
