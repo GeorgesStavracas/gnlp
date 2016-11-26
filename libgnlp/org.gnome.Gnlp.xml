@@ -1,0 +1,98 @@
+<!DOCTYPE node PUBLIC
+"-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+
+<!--
+ Copyright (C) 2016 Georges Basile Stavracas Neto
+ Copyright (C) 2016 Endless, Inc.
+
+ This library is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License as published by the Free Software Foundation; either
+ version 2 of the License, or (at your option) any later version.
+
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Lesser General Public License for more details.
+
+ You should have received a copy of the GNU Lesser General
+ Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
+-->
+
+<node name="/" xmlns:doc="http://www.freedesktop.org/dbus/1.0/doc.dtd">
+
+  <!--
+
+  -->
+  <interface name="org.gnome.Gnlp.Speech.Settings">
+    <!--
+        Language:
+        The current language.
+
+        The current language that Gnlp is considering.
+    -->
+    <property name="Language" type="s" access="readwrite" />
+
+    <!--
+        SupportsLanguage:
+        @language: The language to check whether Gnlp supports.
+        @supports_language: Whether the language is supported or not.
+
+        Checks whether Gnlp supports a given language.
+    <method name="SupportsLanguage">
+      <arg type='s' direction="in"  name='language' />
+      <arg type='b' direction="out" name='supports_language' />
+    </method>
+    -->
+  </interface>
+
+
+
+  <!--
+      org.gnome.Gnlp.Speech.Listener:
+
+      The base interface for listening voice input.
+  -->
+  <interface name="org.gnome.Gnlp.Speech.Listener">
+    <!--
+        Listening:
+        Whether a voice input is being received.
+
+        Represents whether Gnlp is listening to a voice input or not.
+    -->
+    <property name="Listening" type="b" access="read" />
+
+    <signal name="SpeechRecognized">
+      <arg type='s' name='recognized_speech' />
+      <arg type='d' name='confidence' />
+    </signal>
+
+    <signal name="CommandReceived">
+      <arg type='s' name='module' />
+      <arg type='s' name='command' />
+      <arg type='s' name='args' />
+      <arg type='d' name='confidence' />
+    </signal>
+  </interface>
+
+
+  <!--
+      org.gnome.Gnlp.Speech.Speaker:
+
+      The base interface for producing voice output of texts.
+  -->
+  <interface name="org.gnome.Gnlp.Speech.Speaker">
+    <!--
+        Speaking:
+        Whether a text is being spoken or not.
+
+        Represents whether Gnlp is speaking a text or not.
+    -->
+    <property name="Speaking" type="b" access="read" />
+
+    <method name="ReadText">
+      <arg type='s' name='text' direction="in" />
+    </method>
+  </interface>
+</node>

@@ -1,0 +1,97 @@
+/* gnlp-version.h.in
+ *
+ * Copyright (C) 2016 Georges Basile Stavracas Neto
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#ifndef GNLP_VERSION_H
+#define GNLP_VERSION_H
+
+#if !defined(GNLP_INSIDE) && !defined(GNLP_COMPILATION)
+# error "Only <gnlp.h> can be included directly."
+#endif
+
+/**
+ * SECTION:gnlp-version
+ * @short_description: gnlp version checking
+ *
+ * gnlp provides macros to check the version of the library
+ * at compile-time
+ */
+
+/**
+ * GNLP_MAJOR_VERSION:
+ *
+ * gnlp major version component (e.g. 1 if %GNLP_VERSION is 1.2.3)
+ */
+#define GNLP_MAJOR_VERSION (@MAJOR_VERSION@)
+
+/**
+ * GNLP_MINOR_VERSION:
+ *
+ * gnlp minor version component (e.g. 2 if %GNLP_VERSION is 1.2.3)
+ */
+#define GNLP_MINOR_VERSION (@MINOR_VERSION@)
+
+/**
+ * GNLP_MICRO_VERSION:
+ *
+ * gnlp micro version component (e.g. 3 if %GNLP_VERSION is 1.2.3)
+ */
+#define GNLP_MICRO_VERSION (@MICRO_VERSION@)
+
+/**
+ * GNLP_VERSION
+ *
+ * gnlp version.
+ */
+#define GNLP_VERSION (@VERSION@)
+
+/**
+ * GNLP_VERSION_S:
+ *
+ * gnlp version, encoded as a string, useful for printing and
+ * concatenation.
+ */
+#define GNLP_VERSION_S "@VERSION@"
+
+#define GNLP_ENCODE_VERSION(major,minor,micro) \
+        ((major) << 24 | (minor) << 16 | (micro) << 8)
+
+/**
+ * GNLP_VERSION_HEX:
+ *
+ * gnlp version, encoded as an hexadecimal number, useful for
+ * integer comparisons.
+ */
+#define GNLP_VERSION_HEX \
+        (GNLP_ENCODE_VERSION (GNLP_MAJOR_VERSION, GNLP_MINOR_VERSION, GNLP_MICRO_VERSION))
+
+/**
+ * GNLP_CHECK_VERSION:
+ * @major: required major version
+ * @minor: required minor version
+ * @micro: required micro version
+ *
+ * Compile-time version checking. Evaluates to %TRUE if the version
+ * of gnlp is greater than the required one.
+ */
+#define GNLP_CHECK_VERSION(major,minor,micro)   \
+        (GNLP_MAJOR_VERSION > (major) || \
+         (GNLP_MAJOR_VERSION == (major) && GNLP_MINOR_VERSION > (minor)) || \
+         (GNLP_MAJOR_VERSION == (major) && GNLP_MINOR_VERSION == (minor) && \
+          GNLP_MICRO_VERSION >= (micro)))
+
+#endif /* GNLP_VERSION_H */

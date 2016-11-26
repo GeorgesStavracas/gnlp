@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+]>
+<refentry id="gdbus-org.gnome.Gnlp.Speech.Speaker">
+  <refmeta>    <refentrytitle role="top_of_page" id="gdbus-interface-org-gnome-Gnlp-Speech-Speaker.top_of_page">org.gnome.Gnlp.Speech.Speaker</refentrytitle>
+  <indexterm zone="gdbus-interface-org-gnome-Gnlp-Speech-Speaker.top_of_page"><primary sortas="Speech.Speaker">org.gnome.Gnlp.Speech.Speaker</primary></indexterm>
+  </refmeta>  <refnamediv>    <refname>org.gnome.Gnlp.Speech.Speaker</refname>    <refpurpose></refpurpose>  </refnamediv>  <refsynopsisdiv role="synopsis">
+    <title role="synopsis.title">Methods</title>
+    <synopsis>
+<link linkend="gdbus-method-org-gnome-Gnlp-Speech-Speaker.ReadText">ReadText</link> (IN  s text);
+</synopsis>
+  </refsynopsisdiv>
+  <refsect1 role="properties">
+    <title role="properties.title">Properties</title>
+    <synopsis>
+<link linkend="gdbus-property-org-gnome-Gnlp-Speech-Speaker.Speaking">Speaking</link>  readable   b
+</synopsis>
+  </refsect1>
+<refsect1 role="desc" id="gdbus-interface-org-gnome-Gnlp-Speech-Speaker">
+  <title role="desc.title">Description</title>
+  <para>      The base interface for producing voice output of texts.
+</para>
+</refsect1>
+<refsect1 role="details" id="gdbus-methods-org.gnome.Gnlp.Speech.Speaker">
+  <title role="details.title">Method Details</title>
+<refsect2 role="method" id="gdbus-method-org-gnome-Gnlp-Speech-Speaker.ReadText">
+  <title>The ReadText() method</title>
+  <indexterm zone="gdbus-method-org-gnome-Gnlp-Speech-Speaker.ReadText"><primary sortas="Speech.Speaker.ReadText">org.gnome.Gnlp.Speech.Speaker.ReadText()</primary></indexterm>
+<programlisting>
+ReadText (IN  s text);
+</programlisting>
+<para></para>
+<variablelist role="params">
+<varlistentry>
+  <term><literal>IN s <parameter>text</parameter></literal>:</term>
+  <listitem><para></para></listitem>
+</varlistentry>
+</variablelist>
+</refsect2>
+</refsect1>
+<refsect1 role="details" id="gdbus-properties-org.gnome.Gnlp.Speech.Speaker">
+  <title role="details.title">Property Details</title>
+<refsect2 role="property" id="gdbus-property-org-gnome-Gnlp-Speech-Speaker.Speaking">
+  <title>The "Speaking" property</title>
+  <indexterm zone="gdbus-property-org-gnome-Gnlp-Speech-Speaker.Speaking"><primary sortas="Speech.Speaker:Speaking">org.gnome.Gnlp.Speech.Speaker:Speaking</primary></indexterm>
+<programlisting>
+Speaking  readable   b
+</programlisting>
+<para>        Whether a text is being spoken or not.
+</para><para>        Represents whether Gnlp is speaking a text or not.
+</para>
+</refsect2>
+</refsect1>
+</refentry>
+

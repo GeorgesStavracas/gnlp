@@ -1,0 +1,11 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: Gnlp
+Description: GNOME Natural Language Processing tool
+Version: @API_VERSION@
+Requires: gio-2.0 julius-4 sent-4
+Libs: -L${libdir} -lgnlp-@API_VERSION@
+Cflags: -I${includedir}/gnlp-@API_VERSION@ -I${libdir}/gnlp-@API_VERSION@/include

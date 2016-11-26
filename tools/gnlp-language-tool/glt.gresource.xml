@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+  <gresource prefix="/org/gnome/glt">
+    <file alias="ui/language-view.ui">resources/language-view.ui</file>
+    <file alias="ui/selector-row.ui">resources/selector-row.ui</file>
+    <file alias="ui/selector-view.ui">resources/selector-view.ui</file>
+    <file alias="ui/view-row.ui">resources/view-row.ui</file>
+    <file alias="ui/view-selector-popover.ui">resources/view-selector-popover.ui</file>
+    <file alias="ui/workbench.ui">resources/workbench.ui</file>
+  </gresource>
+</gresources>
+

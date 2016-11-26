@@ -1,0 +1,7 @@
+[default]
+name=Padrão
+device=local
+runtime=host
+config-opts=
+prefix=/home/feaneron/.cache/gnome-builder/install/gnlp/host
+default=true

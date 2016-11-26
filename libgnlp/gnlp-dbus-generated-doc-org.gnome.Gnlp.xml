@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+]>
+<refentry id="gdbus-org.gnome.Gnlp">
+  <refmeta>    <refentrytitle role="top_of_page" id="gdbus-interface-org-gnome-Gnlp.top_of_page">org.gnome.Gnlp</refentrytitle>
+  <indexterm zone="gdbus-interface-org-gnome-Gnlp.top_of_page"><primary sortas="org.gnome.Gnlp">org.gnome.Gnlp</primary></indexterm>
+  </refmeta>  <refnamediv>    <refname>org.gnome.Gnlp</refname>    <refpurpose></refpurpose>  </refnamediv><refsect1 role="desc" id="gdbus-interface-org-gnome-Gnlp">
+  <title role="desc.title">Description</title>
+  <para></para>
+</refsect1>
+</refentry>
+

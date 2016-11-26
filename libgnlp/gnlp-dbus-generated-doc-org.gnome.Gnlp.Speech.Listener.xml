@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+]>
+<refentry id="gdbus-org.gnome.Gnlp.Speech.Listener">
+  <refmeta>    <refentrytitle role="top_of_page" id="gdbus-interface-org-gnome-Gnlp-Speech-Listener.top_of_page">org.gnome.Gnlp.Speech.Listener</refentrytitle>
+  <indexterm zone="gdbus-interface-org-gnome-Gnlp-Speech-Listener.top_of_page"><primary sortas="Speech.Listener">org.gnome.Gnlp.Speech.Listener</primary></indexterm>
+  </refmeta>  <refnamediv>    <refname>org.gnome.Gnlp.Speech.Listener</refname>    <refpurpose></refpurpose>  </refnamediv>  <refsect1 role="signal_proto">
+    <title role="signal_proto.title">Signals</title>
+    <synopsis>
+<link linkend="gdbus-signal-org-gnome-Gnlp-Speech-Listener.SpeechRecognized">SpeechRecognized</link> (s recognized_speech,
+                  d confidence);
+<link linkend="gdbus-signal-org-gnome-Gnlp-Speech-Listener.CommandReceived">CommandReceived</link>  (s module,
+                  s command,
+                  s args,
+                  d confidence);
+</synopsis>
+  </refsect1>
+  <refsect1 role="properties">
+    <title role="properties.title">Properties</title>
+    <synopsis>
+<link linkend="gdbus-property-org-gnome-Gnlp-Speech-Listener.Listening">Listening</link>  readable   b
+</synopsis>
+  </refsect1>
+<refsect1 role="desc" id="gdbus-interface-org-gnome-Gnlp-Speech-Listener">
+  <title role="desc.title">Description</title>
+  <para>      The base interface for listening voice input.
+</para>
+</refsect1>
+<refsect1 role="details" id="gdbus-signals-org.gnome.Gnlp.Speech.Listener">
+  <title role="details.title">Signal Details</title>
+<refsect2 role="signal" id="gdbus-signal-org-gnome-Gnlp-Speech-Listener.SpeechRecognized">
+  <title>The "SpeechRecognized" signal</title>
+  <indexterm zone="gdbus-signal-org-gnome-Gnlp-Speech-Listener.SpeechRecognized"><primary sortas="Speech.Listener::SpeechRecognized">org.gnome.Gnlp.Speech.Listener::SpeechRecognized</primary></indexterm>
+<programlisting>
+SpeechRecognized (s recognized_speech,
+                  d confidence);
+</programlisting>
+<para></para>
+<variablelist role="params">
+<varlistentry>
+  <term><literal>s <parameter>recognized_speech</parameter></literal>:</term>
+  <listitem><para></para></listitem>
+</varlistentry>
+<varlistentry>
+  <term><literal>d <parameter>confidence</parameter></literal>:</term>
+  <listitem><para></para></listitem>
+</varlistentry>
+</variablelist>
+</refsect2>
+<refsect2 role="signal" id="gdbus-signal-org-gnome-Gnlp-Speech-Listener.CommandReceived">
+  <title>The "CommandReceived" signal</title>
+  <indexterm zone="gdbus-signal-org-gnome-Gnlp-Speech-Listener.CommandReceived"><primary sortas="Speech.Listener::CommandReceived">org.gnome.Gnlp.Speech.Listener::CommandReceived</primary></indexterm>
+<programlisting>
+CommandReceived (s module,
+                 s command,
+                 s args,
+                 d confidence);
+</programlisting>
+<para></para>
+<variablelist role="params">
+<varlistentry>
+  <term><literal>s <parameter>module</parameter></literal>:</term>
+  <listitem><para></para></listitem>
+</varlistentry>
+<varlistentry>
+  <term><literal>s <parameter>command</parameter></literal>:</term>
+  <listitem><para></para></listitem>
+</varlistentry>
+<varlistentry>
+  <term><literal>s <parameter>args</parameter></literal>:</term>
+  <listitem><para></para></listitem>
+</varlistentry>
+<varlistentry>
+  <term><literal>d <parameter>confidence</parameter></literal>:</term>
+  <listitem><para></para></listitem>
+</varlistentry>
+</variablelist>
+</refsect2>
+</refsect1>
+<refsect1 role="details" id="gdbus-properties-org.gnome.Gnlp.Speech.Listener">
+  <title role="details.title">Property Details</title>
+<refsect2 role="property" id="gdbus-property-org-gnome-Gnlp-Speech-Listener.Listening">
+  <title>The "Listening" property</title>
+  <indexterm zone="gdbus-property-org-gnome-Gnlp-Speech-Listener.Listening"><primary sortas="Speech.Listener:Listening">org.gnome.Gnlp.Speech.Listener:Listening</primary></indexterm>
+<programlisting>
+Listening  readable   b
+</programlisting>
+<para>        Whether a voice input is being received.
+</para><para>        Represents whether Gnlp is listening to a voice input or not.
+</para>
+</refsect2>
+</refsect1>
+</refentry>
+

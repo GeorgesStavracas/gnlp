@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+]>
+<refentry id="gdbus-org.gnome.Gnlp.Settings">
+  <refmeta>    <refentrytitle role="top_of_page" id="gdbus-interface-org-gnome-Gnlp-Settings.top_of_page">org.gnome.Gnlp.Settings</refentrytitle>
+  <indexterm zone="gdbus-interface-org-gnome-Gnlp-Settings.top_of_page"><primary sortas="Settings">org.gnome.Gnlp.Settings</primary></indexterm>
+  </refmeta>  <refnamediv>    <refname>org.gnome.Gnlp.Settings</refname>    <refpurpose></refpurpose>  </refnamediv>  <refsect1 role="properties">
+    <title role="properties.title">Properties</title>
+    <synopsis>
+<link linkend="gdbus-property-org-gnome-Gnlp-Settings.Language">Language</link>  readable   s
+</synopsis>
+  </refsect1>
+<refsect1 role="desc" id="gdbus-interface-org-gnome-Gnlp-Settings">
+  <title role="desc.title">Description</title>
+  <para></para>
+</refsect1>
+<refsect1 role="details" id="gdbus-properties-org.gnome.Gnlp.Settings">
+  <title role="details.title">Property Details</title>
+<refsect2 role="property" id="gdbus-property-org-gnome-Gnlp-Settings.Language">
+  <title>The "Language" property</title>
+  <indexterm zone="gdbus-property-org-gnome-Gnlp-Settings.Language"><primary sortas="Settings:Language">org.gnome.Gnlp.Settings:Language</primary></indexterm>
+<programlisting>
+Language  readable   s
+</programlisting>
+<para>        The current language.
+</para><para>        The current language that Gnlp is considering.
+</para>
+</refsect2>
+</refsect1>
+</refentry>
+
