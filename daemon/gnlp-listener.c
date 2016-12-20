@@ -67,6 +67,13 @@ typedef struct
   gchar        *recognized_speech;
 } SignalData;
 
+static inline void
+set_dialog_state (GnlpListener *self,
+                  GnlpState     state)
+{
+  gnlp_dialog_state_set_state (gnlp_settings_get_dialog_state (self->settings), state);
+}
+
 static void
 free_signal_data (gpointer user_data)
 {
@@ -133,6 +140,9 @@ set_listening (GnlpListener *self,
 
   if (self->listening != listening)
     {
+      if (listening)
+        set_dialog_state (self, GNLP_STATE_LISTENING);
+
       self->listening = listening;
       g_object_notify (G_OBJECT (self), "listening");
     }
@@ -152,7 +162,7 @@ status_recready (Recog *recog,
   if (recog->jconf->input.speech_input != SP_MIC)
     return;
 
-  g_debug ("Waiting...");
+  set_dialog_state (self, GNLP_STATE_WAITING);
 
   set_listening (self, FALSE);
 }

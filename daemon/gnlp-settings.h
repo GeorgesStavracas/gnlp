@@ -20,6 +20,7 @@
 #define GNLP_SETTINGS_H
 
 #include "gnlp.h"
+#include "gnlp-dialog-state.h"
 
 #include <glib-object.h>
 
@@ -35,6 +36,8 @@ GnlpLanguage*        gnlp_settings_get_language                  (GnlpSettings  
 
 void                 gnlp_settings_set_language                  (GnlpSettings       *self,
                                                                   GnlpLanguage       *language);
+
+GnlpDialogState*     gnlp_settings_get_dialog_state              (GnlpSettings       *self);
 
 G_END_DECLS
 

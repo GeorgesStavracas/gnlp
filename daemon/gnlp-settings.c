@@ -31,6 +31,8 @@ struct _GnlpSettings
 
   GDBusProxy         *localed;
 
+  GnlpDialogState    *dialog_state;
+
   GnlpLanguage       *language;
   gchar              *language_name;
   gboolean            language_set : 1;
@@ -205,6 +207,8 @@ gnlp_settings_class_init (GnlpSettingsClass *klass)
 static void
 gnlp_settings_init (GnlpSettings *self)
 {
+  self->dialog_state = gnlp_dialog_state_new ();
+
   self->language_name = g_strdup (DEFAULT_LOCALE);
   self->language = gnlp_language_new (DEFAULT_LOCALE);
 
@@ -238,4 +242,12 @@ gnlp_settings_set_language (GnlpSettings *self,
 
   if (g_set_object (&self->language, language))
     g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_LANGUAGE]);
+}
+
+GnlpDialogState*
+gnlp_settings_get_dialog_state (GnlpSettings *self)
+{
+  g_return_val_if_fail (GNLP_IS_SETTINGS (self), NULL);
+
+  return self->dialog_state;
 }
