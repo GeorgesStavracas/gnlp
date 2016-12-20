@@ -33,10 +33,6 @@ GnlpListener*        gnlp_listener_new                           (GnlpSettings  
 
 void                 gnlp_listener_run                           (GnlpListener       *self);
 
-void                 gnlp_listener_pause                         (GnlpListener       *self);
-
-void                 gnlp_listener_resume                        (GnlpListener       *self);
-
 G_END_DECLS
 
 #endif /* GNLP_LISTENER_H */
