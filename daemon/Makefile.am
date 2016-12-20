@@ -1,6 +1,8 @@
 libexec_PROGRAMS = gnlp-daemon
 
 BUILT_SOURCES = \
+	gnlp-enum-types.c \
+	gnlp-enum-types.h \
 	gnlp-resources.c \
 	gnlp-resources.h
 
@@ -8,6 +10,8 @@ gnlp_daemon_SOURCES = \
 	$(BUILT_SOURCES) \
 	gnlp-daemon.c \
 	gnlp-daemon.h \
+	gnlp-dialog-state.c \
+	gnlp-dialog-state.h \
 	gnlp-listener.c \
 	gnlp-listener.h \
 	gnlp-log.c \
@@ -47,5 +51,20 @@ gnlp-resources.h: $(top_srcdir)/data/gnlp.gresource.xml $(resource_files)
 	$(AM_V_GEN)$(GLIB_COMPILE_RESOURCES) --target=$@ --sourcedir=$(top_srcdir)/data --sourcedir=$(top_builddir)/data --generate-header --c-name gnlp $(top_srcdir)/data/gnlp.gresource.xml
 
 #-------------------------------------------------------
+
+enum_types = \
+    gnlp-dialog-state.h
+
+gnlp-enum-types.h: gnlp-enum-types.h.template $(enum_types) $(GLIB_MKENUMS)
+	$(AM_V_GEN) (cd $(srcdir) && $(GLIB_MKENUMS) --template gnlp-enum-types.h.template $(enum_types)) > $@
+
+gnlp-enum-types.c: gnlp-enum-types.c.template $(enum_types) $(GLIB_MKENUMS)
+	$(AM_V_GEN) (cd $(srcdir) && $(GLIB_MKENUMS) --template gnlp-enum-types.c.template $(enum_types)) > $@
+
+#-------------------------------------------------------
+
+EXTRA_DIST = \
+    gnlp-enum-types.h.template \
+    gnlp-enum-types.c.template
 
 -include $(top_srcdir)/git.mk
