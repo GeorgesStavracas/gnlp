@@ -1,7 +1,3 @@
-#-dfa /home/feaneron/.voxforge/gnome/grammar/sample.dfa
-#-v /home/feaneron/.voxforge/gnome/grammar/sample.dict
-#-h /home/feaneron/.voxforge/gnome/acoustic_model_files/hmmdefs
-#-hlist /home/feaneron/.voxforge/gnome/acoustic_model_files/tiedlist
 -spmodel "sp"
 -multipath
 -gprune safe
