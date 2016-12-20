@@ -20,6 +20,8 @@ gnlp_daemon_SOURCES = \
 	gnlp-settings.h \
 	gnlp-speaker.c \
 	gnlp-speaker.h \
+	gnlp-voice-command.c \
+	gnlp-voice-command.h \
 	main.c \
 	$(NULL)
 
