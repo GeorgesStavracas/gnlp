@@ -65,6 +65,7 @@ check_supports_listening_at_path (GnlpLanguage *self,
     "acoustic_model",
     "config",
     "dict",
+    "grammar_dict",
     "tiedlist",
     "macros"
   };
