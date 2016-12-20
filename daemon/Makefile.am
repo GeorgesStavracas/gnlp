@@ -53,7 +53,8 @@ gnlp-resources.h: $(top_srcdir)/data/gnlp.gresource.xml $(resource_files)
 #-------------------------------------------------------
 
 enum_types = \
-    gnlp-dialog-state.h
+    gnlp-dialog-state.h \
+    gnlp-listener.h
 
 gnlp-enum-types.h: gnlp-enum-types.h.template $(enum_types) $(GLIB_MKENUMS)
 	$(AM_V_GEN) (cd $(srcdir) && $(GLIB_MKENUMS) --template gnlp-enum-types.h.template $(enum_types)) > $@

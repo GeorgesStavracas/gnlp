@@ -25,6 +25,14 @@
 
 G_BEGIN_DECLS
 
+typedef enum
+{
+  GNLP_LISTENER_MODE_NONE,
+  GNLP_LISTENER_MODE_COMMAND,
+  GNLP_LISTENER_MODE_FREE_SPEECH,
+  GNLP_LISTENER_MODE_QUESTION
+} GnlpListenerMode;
+
 #define GNLP_TYPE_LISTENER (gnlp_listener_get_type())
 
 G_DECLARE_FINAL_TYPE (GnlpListener, gnlp_listener, GNLP, LISTENER, GObject)
@@ -32,6 +40,11 @@ G_DECLARE_FINAL_TYPE (GnlpListener, gnlp_listener, GNLP, LISTENER, GObject)
 GnlpListener*        gnlp_listener_new                           (GnlpSettings       *settings);
 
 void                 gnlp_listener_run                           (GnlpListener       *self);
+
+GnlpListenerMode     gnlp_listener_get_mode                      (GnlpListener       *self);
+
+void                 gnlp_listener_set_mode                      (GnlpListener       *self,
+                                                                  GnlpListenerMode    mode);
 
 G_END_DECLS
 

@@ -19,6 +19,7 @@
 #define G_LOG_DOMAIN "Listener"
 
 #include "gnlp.h"
+#include "gnlp-enum-types.h"
 #include "gnlp-listener.h"
 
 #include <gio/gio.h>
@@ -29,6 +30,8 @@ struct _GnlpListener
   GObject             parent;
 
   gboolean            listening;
+
+  GnlpListenerMode    mode;
 
   Jconf              *config;
   Recog              *recognizer;
@@ -42,6 +45,7 @@ enum
 {
   PROP_0,
   PROP_LISTENING,
+  PROP_MODE,
   PROP_SETTINGS,
   N_PROPS
 };
@@ -544,6 +548,10 @@ gnlp_listener_get_property (GObject    *object,
       g_value_set_boolean (value, self->listening);
       break;
 
+    case PROP_MODE:
+      g_value_set_enum (value, self->mode);
+      break;
+
     case PROP_SETTINGS:
       g_value_set_object (value, self->settings);
       break;
@@ -563,6 +571,10 @@ gnlp_listener_set_property (GObject      *object,
 
   switch (prop_id)
     {
+    case PROP_MODE:
+      gnlp_listener_set_mode (self, g_value_get_enum (value));
+      break;
+
     case PROP_SETTINGS:
       if (!g_set_object (&self->settings, g_value_get_object (value)))
         break;
@@ -595,6 +607,15 @@ gnlp_listener_class_init (GnlpListenerClass *klass)
                                                          "Listening",
                                                          FALSE,
                                                          G_PARAM_READABLE));
+
+  g_object_class_install_property (object_class,
+                                   PROP_MODE,
+                                   g_param_spec_enum ("mode",
+                                                      "Mode",
+                                                      "Mode",
+                                                      GNLP_TYPE_LISTENER_MODE,
+                                                      GNLP_LISTENER_MODE_NONE,
+                                                      G_PARAM_READWRITE));
 
   g_object_class_install_property (object_class,
                                    PROP_SETTINGS,
@@ -630,6 +651,11 @@ gnlp_listener_class_init (GnlpListenerClass *klass)
 static void
 gnlp_listener_init (GnlpListener *self)
 {
+  /*
+   * TODO: the initial mode should me NONE, and we must detect the input
+   * type when that happens. Right now, however, the COMMAND mode is enough.
+   */
+  self->mode = GNLP_LISTENER_MODE_COMMAND;
 }
 
 GnlpListener*
@@ -649,4 +675,26 @@ gnlp_listener_run (GnlpListener *self)
   g_task_run_in_thread (task, start_listener_sync);
 
   g_object_unref (task);
+}
+
+GnlpListenerMode
+gnlp_listener_get_mode (GnlpListener *self)
+{
+  g_return_val_if_fail (GNLP_IS_LISTENER (self), GNLP_LISTENER_MODE_NONE);
+
+  return self->mode;
+}
+
+void
+gnlp_listener_set_mode (GnlpListener     *self,
+                        GnlpListenerMode  mode)
+{
+  g_return_if_fail (GNLP_IS_LISTENER (self));
+
+  if (self->mode == mode)
+    return;
+
+  /* TODO: change Julius mode too */
+  self->mode = mode;
+  g_object_notify (G_OBJECT (self), "mode");
 }
