@@ -359,8 +359,6 @@ run_julius (GTask       *task,
   GnlpListener *self;
   int ret;
 
-  static char speechfilename[MAXPATHLEN];
-
   self = g_task_get_source_object (task);
 
   /* Setup the main Julius config */
@@ -388,63 +386,33 @@ run_julius (GTask       *task,
 
   j_recog_info (self->recognizer);
 
-  if (self->config->input.speech_input == SP_MFCFILE || self->config->input.speech_input == SP_OUTPROBFILE)
+  /* Open the voice stream and start parsing */
+  ret = j_open_stream (self->recognizer, NULL);
+
+  switch (ret)
     {
-      while (get_line_from_stdin (speechfilename, MAXPATHLEN, (gchar*)"enter MFCC filename->") != NULL)
-        {
-          /* open the input file */
-          ret = j_open_stream (self->recognizer, speechfilename);
+    case -1:
+      g_critical ("Error in input stream\n");
+      goto out;
 
-          switch(ret)
-            {
-            case 0:
-              break;
+    case -2:
+      g_critical ("Failed to begin input stream\n");
+      goto out;
 
-            case -1:
-              /* go on to the next input */
-              continue;
-
-            case -2:
-              return;
-
-            default:
-              break;
-            }
-
-          /* recognition loop */
-          ret = j_recognize_stream (self->recognizer);
-          if (ret == -1)
-            return;
-        }
+    default:
+      break;
     }
-  else
-    {
-      /* raw speech input (microphone etc.) */
 
-      switch(j_open_stream (self->recognizer, NULL))
-        {
-        case -1:
-          g_critical ("error in input stream\n");
-          return;
+  /*
+   * Enter main loop to recognize the input stream
+   * finish after whole input has been processed and input reaches end
+   */
+  ret = j_recognize_stream (self->recognizer);
 
-        case -2:
-          g_critical ("failed to begin input stream\n");
-          return;
+  if (ret == -1)
+    return;
 
-        default:
-          break;
-        }
-
-    /*
-     * Enter main loop to recognize the input stream
-     * finish after whole input has been processed and input reaches end
-     */
-    ret = j_recognize_stream (self->recognizer);
-
-    if (ret == -1)
-      return;
-  }
-
+out:
   j_close_stream (self->recognizer);
   j_recog_free (self->recognizer);
 }
