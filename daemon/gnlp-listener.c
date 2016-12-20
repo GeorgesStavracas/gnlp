@@ -515,13 +515,14 @@ start_listener_sync (GTask        *task,
 
   self = GNLP_LISTENER (source_object);
   language = gnlp_settings_get_language (self->settings);
-  config = read_config_at_path (gnlp_language_get_path (language));
 
   if (!gnlp_language_has_quirk (language, GNLP_LANGUAGE_QUIRK_LISTEN))
     {
       g_debug ("The current language does not support listening.");
       return;
     }
+
+  config = read_config_at_path (gnlp_language_get_path (language));
 
   /* Do not let the daemon die */
   g_application_hold (g_application_get_default ());
