@@ -71,7 +71,7 @@
     <signal name="CommandReceived">
       <arg type='s' name='module' />
       <arg type='s' name='command' />
-      <arg type='s' name='args' />
+      <arg type='as' name='args' />
       <arg type='d' name='confidence' />
     </signal>
   </interface>

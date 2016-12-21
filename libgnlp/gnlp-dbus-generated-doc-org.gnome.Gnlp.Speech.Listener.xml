@@ -8,12 +8,12 @@
   </refmeta>  <refnamediv>    <refname>org.gnome.Gnlp.Speech.Listener</refname>    <refpurpose></refpurpose>  </refnamediv>  <refsect1 role="signal_proto">
     <title role="signal_proto.title">Signals</title>
     <synopsis>
-<link linkend="gdbus-signal-org-gnome-Gnlp-Speech-Listener.SpeechRecognized">SpeechRecognized</link> (s recognized_speech,
-                  d confidence);
-<link linkend="gdbus-signal-org-gnome-Gnlp-Speech-Listener.CommandReceived">CommandReceived</link>  (s module,
-                  s command,
-                  s args,
-                  d confidence);
+<link linkend="gdbus-signal-org-gnome-Gnlp-Speech-Listener.SpeechRecognized">SpeechRecognized</link> (s  recognized_speech,
+                  d  confidence);
+<link linkend="gdbus-signal-org-gnome-Gnlp-Speech-Listener.CommandReceived">CommandReceived</link>  (s  module,
+                  s  command,
+                  as args,
+                  d  confidence);
 </synopsis>
   </refsect1>
   <refsect1 role="properties">
@@ -52,10 +52,10 @@ SpeechRecognized (s recognized_speech,
   <title>The "CommandReceived" signal</title>
   <indexterm zone="gdbus-signal-org-gnome-Gnlp-Speech-Listener.CommandReceived"><primary sortas="Speech.Listener::CommandReceived">org.gnome.Gnlp.Speech.Listener::CommandReceived</primary></indexterm>
 <programlisting>
-CommandReceived (s module,
-                 s command,
-                 s args,
-                 d confidence);
+CommandReceived (s  module,
+                 s  command,
+                 as args,
+                 d  confidence);
 </programlisting>
 <para></para>
 <variablelist role="params">
@@ -68,7 +68,7 @@ CommandReceived (s module,
   <listitem><para></para></listitem>
 </varlistentry>
 <varlistentry>
-  <term><literal>s <parameter>args</parameter></literal>:</term>
+  <term><literal>as <parameter>args</parameter></literal>:</term>
   <listitem><para></para></listitem>
 </varlistentry>
 <varlistentry>
