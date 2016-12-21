@@ -36,7 +36,7 @@ struct _GnlpListener
   Jconf              *config;
   Recog              *recognizer;
 
-  GnlpSettings       *settings;
+  GnlpContext        *context;
 };
 
 G_DEFINE_TYPE (GnlpListener, gnlp_listener, G_TYPE_OBJECT)
@@ -46,7 +46,7 @@ enum
   PROP_0,
   PROP_LISTENING,
   PROP_MODE,
-  PROP_SETTINGS,
+  PROP_CONTEXT,
   N_PROPS
 };
 
@@ -75,7 +75,7 @@ static inline void
 set_dialog_state (GnlpListener *self,
                   GnlpState     state)
 {
-  gnlp_dialog_state_set_state (gnlp_settings_get_dialog_state (self->settings), state);
+  gnlp_dialog_state_set_state (gnlp_context_get_dialog_state (self->context), state);
 }
 
 static void
@@ -144,9 +144,6 @@ set_listening (GnlpListener *self,
 
   if (self->listening != listening)
     {
-      if (listening)
-        set_dialog_state (self, GNLP_STATE_LISTENING);
-
       self->listening = listening;
       g_object_notify (G_OBJECT (self), "listening");
     }
@@ -167,7 +164,6 @@ status_recready (Recog *recog,
     return;
 
   set_dialog_state (self, GNLP_STATE_WAITING);
-
   set_listening (self, FALSE);
 }
 
@@ -496,7 +492,7 @@ start_listener_sync (GTask        *task,
   gchar *config;
 
   self = GNLP_LISTENER (source_object);
-  language = gnlp_settings_get_language (self->settings);
+  language = gnlp_context_get_language (self->context);
 
   if (!gnlp_language_has_quirk (language, GNLP_LANGUAGE_QUIRK_LISTEN))
     {
@@ -521,7 +517,7 @@ start_listener_sync (GTask        *task,
  * Callbacks
  */
 static void
-language_changed_cb (GnlpSettings *settings,
+language_changed_cb (GnlpContext *context,
                      GParamSpec   *pspec,
                      GnlpListener *self)
 {
@@ -552,8 +548,8 @@ gnlp_listener_get_property (GObject    *object,
       g_value_set_enum (value, self->mode);
       break;
 
-    case PROP_SETTINGS:
-      g_value_set_object (value, self->settings);
+    case PROP_CONTEXT:
+      g_value_set_object (value, self->context);
       break;
 
     default:
@@ -575,15 +571,15 @@ gnlp_listener_set_property (GObject      *object,
       gnlp_listener_set_mode (self, g_value_get_enum (value));
       break;
 
-    case PROP_SETTINGS:
-      if (!g_set_object (&self->settings, g_value_get_object (value)))
+    case PROP_CONTEXT:
+      if (!g_set_object (&self->context, g_value_get_object (value)))
         break;
 
-      g_signal_connect_swapped (self->settings,
+      g_signal_connect_swapped (self->context,
                                 "notify::language",
                                 G_CALLBACK (language_changed_cb),
                                 self);
-      g_object_notify (object, "settings");
+      g_object_notify (object, "context");
       break;
 
     default:
@@ -618,11 +614,11 @@ gnlp_listener_class_init (GnlpListenerClass *klass)
                                                       G_PARAM_READWRITE));
 
   g_object_class_install_property (object_class,
-                                   PROP_SETTINGS,
-                                   g_param_spec_object ("settings",
-                                                        "Settings",
-                                                        "Settings",
-                                                        GNLP_TYPE_SETTINGS,
+                                   PROP_CONTEXT,
+                                   g_param_spec_object ("context",
+                                                        "Context",
+                                                        "Context",
+                                                        GNLP_TYPE_CONTEXT,
                                                         G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 
   signals[COMMAND_RECEIVED] = g_signal_new ("command-received",
@@ -659,10 +655,10 @@ gnlp_listener_init (GnlpListener *self)
 }
 
 GnlpListener*
-gnlp_listener_new (GnlpSettings *settings)
+gnlp_listener_new (GnlpContext *context)
 {
   return g_object_new (GNLP_TYPE_LISTENER,
-                       "settings", settings,
+                       "context", context,
                        NULL);
 }
 

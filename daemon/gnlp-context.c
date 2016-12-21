@@ -1,4 +1,4 @@
-/* gnlp-settings.c
+/* gnlp-context.c
  *
  * Copyright (C) 2016 Georges Basile Stavracas Neto <georges.stavracas@gmail.com>
  *
@@ -16,16 +16,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#define G_LOG_DOMAIN "Settings"
+#define G_LOG_DOMAIN "Context"
 
-#include "gnlp-settings.h"
+#include "gnlp-context.h"
 
 #include <glib/gi18n.h>
 #include <gio/gio.h>
 
 #define DEFAULT_LOCALE "en_US.utf-8"
 
-struct _GnlpSettings
+struct _GnlpContext
 {
   GObject             parent;
 
@@ -38,7 +38,7 @@ struct _GnlpSettings
   gboolean            language_set : 1;
 };
 
-G_DEFINE_TYPE (GnlpSettings, gnlp_settings, G_TYPE_OBJECT)
+G_DEFINE_TYPE (GnlpContext, gnlp_context, G_TYPE_OBJECT)
 
 enum {
   PROP_0,
@@ -50,7 +50,7 @@ enum {
 static GParamSpec *properties [N_PROPS] = { NULL, };
 
 static void
-update_language (GnlpSettings  *self)
+update_language (GnlpContext *self)
 {
   GVariant *localed_props;
   const gchar **strv;
@@ -95,7 +95,7 @@ update_language (GnlpSettings  *self)
 }
 
 static void
-setup_language_proxy (GnlpSettings *self)
+setup_language_proxy (GnlpContext *self)
 {
   GDBusConnection *bus;
   GError *error;
@@ -132,22 +132,22 @@ out:
 }
 
 static void
-gnlp_settings_finalize (GObject *object)
+gnlp_context_finalize (GObject *object)
 {
-  GnlpSettings *self = (GnlpSettings *)object;
+  GnlpContext *self = (GnlpContext *)object;
 
   g_clear_pointer (&self->language, g_free);
 
-  G_OBJECT_CLASS (gnlp_settings_parent_class)->finalize (object);
+  G_OBJECT_CLASS (gnlp_context_parent_class)->finalize (object);
 }
 
 static void
-gnlp_settings_get_property (GObject    *object,
+gnlp_context_get_property (GObject    *object,
                             guint       prop_id,
                             GValue     *value,
                             GParamSpec *pspec)
 {
-  GnlpSettings *self = GNLP_SETTINGS (object);
+  GnlpContext *self = GNLP_CONTEXT (object);
 
   switch (prop_id)
     {
@@ -165,7 +165,7 @@ gnlp_settings_get_property (GObject    *object,
 }
 
 static void
-gnlp_settings_set_property (GObject      *object,
+gnlp_context_set_property (GObject      *object,
                             guint         prop_id,
                             const GValue *value,
                             GParamSpec   *pspec)
@@ -181,13 +181,13 @@ gnlp_settings_set_property (GObject      *object,
 }
 
 static void
-gnlp_settings_class_init (GnlpSettingsClass *klass)
+gnlp_context_class_init (GnlpContextClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->finalize = gnlp_settings_finalize;
-  object_class->get_property = gnlp_settings_get_property;
-  object_class->set_property = gnlp_settings_set_property;
+  object_class->finalize = gnlp_context_finalize;
+  object_class->get_property = gnlp_context_get_property;
+  object_class->set_property = gnlp_context_set_property;
 
   properties[PROP_LANGUAGE] = g_param_spec_object ("language",
                                                    "Language",
@@ -205,7 +205,7 @@ gnlp_settings_class_init (GnlpSettingsClass *klass)
 }
 
 static void
-gnlp_settings_init (GnlpSettings *self)
+gnlp_context_init (GnlpContext *self)
 {
   self->dialog_state = gnlp_dialog_state_new ();
 
@@ -215,39 +215,39 @@ gnlp_settings_init (GnlpSettings *self)
   setup_language_proxy (self);
 }
 
-GnlpSettings *
-gnlp_settings_new (void)
+GnlpContext *
+gnlp_context_new (void)
 {
-  return g_object_new (GNLP_TYPE_SETTINGS, NULL);
+  return g_object_new (GNLP_TYPE_CONTEXT, NULL);
 }
 
 GnlpLanguage*
-gnlp_settings_get_language (GnlpSettings *self)
+gnlp_context_get_language (GnlpContext *self)
 {
-  g_return_val_if_fail (GNLP_IS_SETTINGS (self), NULL);
+  g_return_val_if_fail (GNLP_IS_CONTEXT (self), NULL);
 
   return self->language;
 }
 
 /**
- * gnlp_settings_get_language_name:
+ * gnlp_context_get_language_name:
  *
  * Sets the language name.
  */
 void
-gnlp_settings_set_language (GnlpSettings *self,
+gnlp_context_set_language (GnlpContext *self,
                             GnlpLanguage *language)
 {
-  g_return_if_fail (GNLP_IS_SETTINGS (self));
+  g_return_if_fail (GNLP_IS_CONTEXT (self));
 
   if (g_set_object (&self->language, language))
     g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_LANGUAGE]);
 }
 
 GnlpDialogState*
-gnlp_settings_get_dialog_state (GnlpSettings *self)
+gnlp_context_get_dialog_state (GnlpContext *self)
 {
-  g_return_val_if_fail (GNLP_IS_SETTINGS (self), NULL);
+  g_return_val_if_fail (GNLP_IS_CONTEXT (self), NULL);
 
   return self->dialog_state;
 }

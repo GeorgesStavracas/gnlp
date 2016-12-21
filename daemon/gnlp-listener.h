@@ -19,7 +19,7 @@
 #ifndef GNLP_LISTENER_H
 #define GNLP_LISTENER_H
 
-#include "gnlp-settings.h"
+#include "gnlp-context.h"
 
 #include <glib-object.h>
 
@@ -37,7 +37,7 @@ typedef enum
 
 G_DECLARE_FINAL_TYPE (GnlpListener, gnlp_listener, GNLP, LISTENER, GObject)
 
-GnlpListener*        gnlp_listener_new                           (GnlpSettings       *settings);
+GnlpListener*        gnlp_listener_new                           (GnlpContext        *context);
 
 void                 gnlp_listener_run                           (GnlpListener       *self);
 

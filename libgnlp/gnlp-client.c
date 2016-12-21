@@ -24,7 +24,7 @@
 #include <glib/gi18n.h>
 
 #define GNLP_LISTENER_PATH "/org/gnome/Gnlp/Speech/Listener"
-#define GNLP_SETTINGS_PATH "/org/gnome/Gnlp/Speech/Settings"
+#define GNLP_CONTEXT_PATH  "/org/gnome/Gnlp/Speech/Context"
 #define GNLP_SPEAKER_PATH  "/org/gnome/Gnlp/Speech/Speaker"
 
 struct _GnlpClient
@@ -35,7 +35,7 @@ struct _GnlpClient
 
   /*< private >*/
   GnlpSpeechListener *listener;
-  GnlpSpeechSettings *settings;
+  GnlpSpeechContext  *context;
   GnlpSpeechSpeaker  *speaker;
   GDBusObjectManager *object_manager;
   gboolean            is_initialized : 1;
@@ -185,16 +185,16 @@ gnlp_client_initable_init (GInitable     *initable,
       goto out;
     }
 
-  /* Settings */
-  object = g_dbus_object_manager_get_object (self->object_manager, GNLP_SETTINGS_PATH);
+  /* Context */
+  object = g_dbus_object_manager_get_object (self->object_manager, GNLP_CONTEXT_PATH);
 
   if (object)
     {
       valid = TRUE;
 
-      self->settings = gnlp_object_peek_speech_settings (GNLP_OBJECT (object));
+      self->context = gnlp_object_peek_speech_context (GNLP_OBJECT (object));
 
-      g_object_bind_property (self->settings,
+      g_object_bind_property (self->context,
                               "language",
                               self,
                               "language",
@@ -205,7 +205,7 @@ gnlp_client_initable_init (GInitable     *initable,
       g_set_error (&self->initialization_error,
                    G_DBUS_ERROR,
                    G_DBUS_ERROR_FAILED,
-                   "%s", _("The settings object is not available, check if Gnlp daemon is running"));
+                   "%s", _("The context object is not available, check if Gnlp daemon is running"));
 
       goto out;
     }
@@ -514,7 +514,7 @@ gnlp_client_get_language (GnlpClient *self)
 {
   g_return_val_if_fail (GNLP_IS_CLIENT (self), NULL);
 
-  return gnlp_speech_settings_get_language (self->settings);
+  return gnlp_speech_context_get_language (self->context);
 }
 
 /**
@@ -533,7 +533,7 @@ gnlp_client_set_language (GnlpClient  *self,
 {
   g_return_if_fail (GNLP_IS_CLIENT (self));
 
-  gnlp_speech_settings_set_language (self->settings, language);
+  gnlp_speech_context_set_language (self->context, language);
 }
 
 /**

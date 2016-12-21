@@ -22,10 +22,10 @@
 # include "config.h"
 #endif
 
+#include "gnlp-context.h"
 #include "gnlp-daemon.h"
 #include "gnlp-listener.h"
 #include "gnlp-resources.h"
-#include "gnlp-settings.h"
 #include "gnlp-speaker.h"
 
 #include <stdlib.h>
@@ -38,8 +38,8 @@ struct _GnlpDaemon
   GnlpListener       *listener;
   GnlpSpeechListener *dbus_listener;
 
-  GnlpSettings       *settings;
-  GnlpSpeechSettings *dbus_settings;
+  GnlpContext        *context;
+  GnlpSpeechContext  *dbus_context;
 
   GnlpSpeaker        *speaker;
   GnlpSpeechSpeaker  *dbus_speaker;
@@ -60,28 +60,28 @@ enum
 
 
 /*
- * Settings
+ * Context
  */
 
 static void
-setup_speech_settings (GnlpDaemon *self)
+setup_speech_context (GnlpDaemon *self)
 {
   GnlpObjectSkeleton *object;
 
   /* Init the listener and the DBus object */
-  self->settings = gnlp_settings_new ();
-  self->dbus_settings = gnlp_speech_settings_skeleton_new ();
+  self->context = gnlp_context_new ();
+  self->dbus_context = gnlp_speech_context_skeleton_new ();
 
   /* Export the listener */
-  object = gnlp_object_skeleton_new ("/org/gnome/Gnlp/Speech/Settings");
-  gnlp_object_skeleton_set_speech_settings (object, self->dbus_settings);
+  object = gnlp_object_skeleton_new ("/org/gnome/Gnlp/Speech/Context");
+  gnlp_object_skeleton_set_speech_context (object, self->dbus_context);
   g_dbus_object_manager_server_export (self->dbus_server, G_DBUS_OBJECT_SKELETON (object));
 
   g_clear_object (&object);
 
-  g_object_bind_property (self->settings,
+  g_object_bind_property (self->context,
                           "language-name",
-                          self->dbus_settings,
+                          self->dbus_context,
                           "language",
                           G_BINDING_BIDIRECTIONAL);
 }
@@ -97,7 +97,7 @@ setup_speech_listener (GnlpDaemon *self)
   GnlpObjectSkeleton *object;
 
   /* Init the listener and the DBus object */
-  self->listener = gnlp_listener_new (self->settings);
+  self->listener = gnlp_listener_new (self->context);
   self->dbus_listener = gnlp_speech_listener_skeleton_new ();
 
   /* Export the listener */
@@ -142,7 +142,7 @@ setup_speech_speaker (GnlpDaemon *self)
   GnlpObjectSkeleton *object;
 
   /* Init the speaker and the DBus object */
-  self->speaker = gnlp_speaker_new (self->settings);
+  self->speaker = gnlp_speaker_new (self->context);
   self->dbus_speaker = gnlp_speech_speaker_skeleton_new ();
 
   /* Export the listener */
@@ -243,7 +243,7 @@ gnlp_daemon_dbus_register (GApplication     *application,
   self->dbus_server = g_dbus_object_manager_server_new ("/org/gnome/Gnlp");
   g_dbus_object_manager_server_set_connection (self->dbus_server, connection);
 
-  setup_speech_settings (self);
+  setup_speech_context (self);
   setup_speech_listener (self);
   setup_speech_speaker  (self);
 

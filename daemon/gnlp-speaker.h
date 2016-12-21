@@ -19,7 +19,7 @@
 #ifndef GNLP_SPEAKER_H
 #define GNLP_SPEAKER_H
 
-#include "gnlp-settings.h"
+#include "gnlp-context.h"
 
 #include <glib-object.h>
 #include <gio/gio.h>
@@ -30,7 +30,7 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (GnlpSpeaker, gnlp_speaker, GNLP, SPEAKER, GObject)
 
-GnlpSpeaker*         gnlp_speaker_new                            (GnlpSettings       *settings);
+GnlpSpeaker*         gnlp_speaker_new                            (GnlpContext          *context);
 
 void                 gnlp_speaker_read                           (GnlpSpeaker           *self,
                                                                   GDBusMethodInvocation *invocation,

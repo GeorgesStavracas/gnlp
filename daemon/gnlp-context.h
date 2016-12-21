@@ -1,4 +1,4 @@
-/* gnlp-settings.h
+/* gnlp-context.h
  *
  * Copyright (C) 2016 Georges Basile Stavracas Neto <georges.stavracas@gmail.com>
  *
@@ -16,8 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GNLP_SETTINGS_H
-#define GNLP_SETTINGS_H
+#ifndef GNLP_CONTEXT_H
+#define GNLP_CONTEXT_H
 
 #include "gnlp.h"
 #include "gnlp-dialog-state.h"
@@ -26,20 +26,20 @@
 
 G_BEGIN_DECLS
 
-#define GNLP_TYPE_SETTINGS (gnlp_settings_get_type())
+#define GNLP_TYPE_CONTEXT (gnlp_context_get_type())
 
-G_DECLARE_FINAL_TYPE (GnlpSettings, gnlp_settings, GNLP, SETTINGS, GObject)
+G_DECLARE_FINAL_TYPE (GnlpContext, gnlp_context, GNLP, CONTEXT, GObject)
 
-GnlpSettings*        gnlp_settings_new                           (void);
+GnlpContext*         gnlp_context_new                            (void);
 
-GnlpLanguage*        gnlp_settings_get_language                  (GnlpSettings       *self);
+GnlpLanguage*        gnlp_context_get_language                   (GnlpContext        *self);
 
-void                 gnlp_settings_set_language                  (GnlpSettings       *self,
+void                 gnlp_context_set_language                   (GnlpContext        *self,
                                                                   GnlpLanguage       *language);
 
-GnlpDialogState*     gnlp_settings_get_dialog_state              (GnlpSettings       *self);
+GnlpDialogState*     gnlp_context_get_dialog_state               (GnlpContext        *self);
 
 G_END_DECLS
 
-#endif /* GNLP_SETTINGS_H */
+#endif /* GNLP_CONTEXT_H */
 

@@ -8,6 +8,8 @@ BUILT_SOURCES = \
 
 gnlp_daemon_SOURCES = \
 	$(BUILT_SOURCES) \
+	gnlp-context.c \
+	gnlp-context.h \
 	gnlp-daemon.c \
 	gnlp-daemon.h \
 	gnlp-dialog-state.c \
@@ -16,8 +18,6 @@ gnlp_daemon_SOURCES = \
 	gnlp-listener.h \
 	gnlp-log.c \
 	gnlp-log.h \
-	gnlp-settings.c \
-	gnlp-settings.h \
 	gnlp-speaker.c \
 	gnlp-speaker.h \
 	gnlp-voice-command.c \

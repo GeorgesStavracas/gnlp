@@ -32,7 +32,7 @@ struct _GnlpSpeaker
   GQueue             *read_queue;
   GCancellable       *cancellable;
 
-  GnlpSettings       *settings;
+  GnlpContext        *context;
 
   gboolean            running : 1;
 };
@@ -48,7 +48,7 @@ G_DEFINE_TYPE (GnlpSpeaker, gnlp_speaker, G_TYPE_OBJECT)
 enum
 {
   PROP_0,
-  PROP_SETTINGS,
+  PROP_CONTEXT,
   N_PROPS
 };
 
@@ -276,8 +276,8 @@ gnlp_speaker_get_property (GObject    *object,
 
   switch (prop_id)
     {
-    case PROP_SETTINGS:
-      g_value_set_object (value, self->settings);
+    case PROP_CONTEXT:
+      g_value_set_object (value, self->context);
       break;
 
     default:
@@ -295,9 +295,9 @@ gnlp_speaker_set_property (GObject      *object,
 
   switch (prop_id)
     {
-    case PROP_SETTINGS:
-      if (g_set_object (&self->settings, g_value_get_object (value)))
-        g_object_notify_by_pspec (object, properties[PROP_SETTINGS]);
+    case PROP_CONTEXT:
+      if (g_set_object (&self->context, g_value_get_object (value)))
+        g_object_notify_by_pspec (object, properties[PROP_CONTEXT]);
       break;
 
     default:
@@ -322,10 +322,10 @@ gnlp_speaker_class_init (GnlpSpeakerClass *klass)
                                      1,
                                      G_TYPE_DBUS_METHOD_INVOCATION);
 
-  properties[PROP_SETTINGS] = g_param_spec_object ("settings",
-                                                   "Settings",
-                                                   "Settings",
-                                                   GNLP_TYPE_SETTINGS,
+  properties[PROP_CONTEXT] = g_param_spec_object ("context",
+                                                   "Context",
+                                                   "Context",
+                                                   GNLP_TYPE_CONTEXT,
                                                    G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY);
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
@@ -341,10 +341,10 @@ gnlp_speaker_init (GnlpSpeaker *self)
 }
 
 GnlpSpeaker *
-gnlp_speaker_new (GnlpSettings *settings)
+gnlp_speaker_new (GnlpContext *context)
 {
   return g_object_new (GNLP_TYPE_SPEAKER,
-                       "settings", settings,
+                       "context", context,
                        NULL);
 }
 

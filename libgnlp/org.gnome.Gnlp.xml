@@ -25,7 +25,7 @@
   <!--
 
   -->
-  <interface name="org.gnome.Gnlp.Speech.Settings">
+  <interface name="org.gnome.Gnlp.Speech.Context">
     <!--
         Language:
         The current language.
