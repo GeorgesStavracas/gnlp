@@ -16,6 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#define G_LOG_DOMAIN "CommandDispatcher"
+
 #include "gnlp-command-dispatcher.h"
 #include "gnlp-daemon.h"
 
@@ -145,6 +147,7 @@ gnlp_command_dispatcher_dispatch_command (GnlpCommandDispatcher *self,
 {
   GnlpSpeechListener *dbus_listener;
   GPtrArray *params;
+  const gchar * const * empty = { NULL };
   const gchar *target;
 
   g_return_val_if_fail (GNLP_IS_COMMAND_DISPATCHER (self), FALSE);
@@ -177,7 +180,7 @@ gnlp_command_dispatcher_dispatch_command (GnlpCommandDispatcher *self,
   gnlp_speech_listener_emit_command_received (dbus_listener,
                                               target,
                                               gnlp_voice_command_get_action (command),
-                                              params ? (const gchar* const *) params->pdata : NULL,
+                                              params ? (const gchar* const *) params->pdata : empty,
                                               1.0);
 
   return TRUE;

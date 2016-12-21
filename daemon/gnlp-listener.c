@@ -20,10 +20,18 @@
 
 #include "gnlp.h"
 #include "gnlp-enum-types.h"
+#include "gnlp-input-parser.h"
 #include "gnlp-listener.h"
+#include "gnlp-voice-command-parser.h"
 
 #include <gio/gio.h>
 #include <julius/juliuslib.h>
+
+enum
+{
+  COMMAND,
+  N_PARSERS
+};
 
 struct _GnlpListener
 {
@@ -35,6 +43,8 @@ struct _GnlpListener
 
   Jconf              *config;
   Recog              *recognizer;
+
+  GnlpInputParser    *parsers[N_PARSERS];
 
   GnlpContext        *context;
 };
@@ -65,9 +75,6 @@ typedef struct
 {
   GnlpListener *self;
   gdouble       confidence;
-  gchar        *module;
-  gchar        *command;
-  gchar        *arg;
   gchar        *recognized_speech;
 } SignalData;
 
@@ -85,35 +92,7 @@ free_signal_data (gpointer user_data)
 
   g_clear_object (&data->self);
   g_free (data->recognized_speech);
-  g_free (data->module);
-  g_free (data->command);
-  g_free (data->arg);
   g_free (data);
-}
-
-static gboolean
-emit_command_received (gconstpointer data)
-{
-  const SignalData *signal_data = data;
-
-  G_LOCK (signal_lock);
-
-  g_debug ("Sending signal (module: '%s', command: '%s', arg: '%s')",
-            signal_data->module,
-            signal_data->command,
-            signal_data->arg);
-
-  g_signal_emit (signal_data->self,
-                 signals[COMMAND_RECEIVED],
-                 0,
-                 signal_data->module ? signal_data->module : "",
-                 signal_data->command ? signal_data->command : "",
-                 signal_data->arg ? signal_data->arg : "",
-                 signal_data->confidence);
-
-  G_UNLOCK (signal_lock);
-
-  return G_SOURCE_REMOVE;
 }
 
 static gboolean
@@ -215,6 +194,54 @@ error_message (gint status)
     }
 }
 
+static inline void
+parse_input (GnlpListener *self,
+             GStrv         words,
+             gdouble      *word_confidence,
+             const gchar  *sentence,
+             gdouble       total_confidence)
+{
+  SignalData *data;
+  gboolean valid;
+
+  valid = FALSE;
+
+  switch (self->mode)
+    {
+    case GNLP_LISTENER_MODE_NONE:
+    case GNLP_LISTENER_MODE_FREE_SPEECH:
+    case GNLP_LISTENER_MODE_QUESTION:
+      /* TODO: implement other listening modes */
+      break;
+
+    case GNLP_LISTENER_MODE_COMMAND:
+      valid = gnlp_input_parser_parse (self->parsers[COMMAND],
+                                       words,
+                                       word_confidence,
+                                       sentence,
+                                       total_confidence);
+      break;
+
+    default:
+      g_assert_not_reached ();
+      break;
+    }
+
+  if (valid)
+    return;
+
+  /* Send a generic signal */
+  data = g_new0 (SignalData, 1);
+  data->self = g_object_ref (self);
+  data->recognized_speech = g_strdup (sentence);
+  data->confidence = total_confidence;
+
+  g_idle_add_full (G_PRIORITY_DEFAULT_IDLE,
+                   (GSourceFunc) emit_speech_recognized,
+                   data,
+                   free_signal_data);
+}
+
 /*
  * Callback to output final recognition result.
  * This function will be called just after recognition of an input ends
@@ -256,64 +283,51 @@ output_result (Recog *recog,
 
       for (n = 0; n < r->result.sentnum; n++)
         {
-          SignalData *data;
+          GPtrArray *words;
           GString *sentence;
-          gboolean full_command;
+          GArray *wconfidence;
 
           s = &(r->result.sent[n]);
           seq = s->word;
           seqnum = s->word_num;
-          full_command = seqnum > 4;
-
-          /* Prepare the commands */
-          data = g_new0 (SignalData, 1);
-          data->self = g_object_ref (self);
-          data->module = g_strdup (winfo->woutput[seq[2]]);
-
-          if (full_command)
-            {
-              data->command = g_strdup (winfo->woutput[seq[3]]);
-              data->arg = g_strdup (winfo->woutput[seq[4]]);
-            }
 
           /* output word sequence like Julius */
           sentence = g_string_new (NULL);
+          words = g_ptr_array_new ();
 
-          for(i = 1; i < seqnum - 1; i++)
+          for (i = 1; i < seqnum - 1; i++)
             {
+              g_ptr_array_add (words, winfo->woutput[seq[i]]);
               g_string_append (sentence, winfo->woutput[seq[i]]);
 
               if (i < seqnum - 2)
                 g_string_append (sentence, " ");
             }
 
-          g_debug ("Sentence: %s", sentence->str);
+          g_ptr_array_add (words, NULL);
 
-          data->recognized_speech = g_string_free (sentence, FALSE);
+          g_debug ("Sentence: %s", sentence->str);
 
           /* confidence scores */
           g_debug ("Confidence:");
+          wconfidence = g_array_new (FALSE, FALSE, sizeof(gdouble));
 
           for (i = 0; i < seqnum; i++)
             {
               g_debug ("\t%-10.10s  %5.3f", winfo->woutput[seq[i]], s->confidence[i]);
               confidence *= s->confidence[i];
+              g_array_append_val (wconfidence, s->confidence[i]);
             }
 
           g_debug ("Total: %lf", confidence);
 
-          /* Send the signal in the main context */
-          data->confidence = confidence;
+          parse_input (self,
+                       (GStrv) words->pdata,
+                       (gpointer) wconfidence->data,
+                       sentence->str,
+                       confidence);
 
-          g_idle_add_full (G_PRIORITY_DEFAULT_IDLE,
-                           (GSourceFunc) emit_command_received,
-                           data,
-                           NULL);
-
-          g_idle_add_full (G_PRIORITY_DEFAULT_IDLE,
-                           (GSourceFunc) emit_speech_recognized,
-                           data,
-                           free_signal_data);
+          g_clear_pointer (&words, g_ptr_array_unref);
         }
     }
 }
@@ -487,6 +501,20 @@ gnlp_listener_finalize (GObject *object)
 }
 
 static void
+gnlp_listener_constructed (GObject *object)
+{
+  GnlpListener *self = GNLP_LISTENER (object);
+
+#define PARSER(type) g_object_new (type, "context", self->context, NULL)
+
+  self->parsers[COMMAND] = PARSER (GNLP_TYPE_VOICE_COMMAND_PARSER);
+
+#undef PARSER
+
+  G_OBJECT_CLASS (gnlp_listener_parent_class)->constructed (object);
+}
+
+static void
 gnlp_listener_get_property (GObject    *object,
                             guint       prop_id,
                             GValue     *value,
@@ -549,6 +577,7 @@ gnlp_listener_class_init (GnlpListenerClass *klass)
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
   object_class->finalize = gnlp_listener_finalize;
+  object_class->constructed = gnlp_listener_constructed;
   object_class->get_property = gnlp_listener_get_property;
   object_class->set_property = gnlp_listener_set_property;
 

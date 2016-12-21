@@ -16,6 +16,8 @@ gnlp_daemon_SOURCES = \
 	gnlp-daemon.h \
 	gnlp-dialog-state.c \
 	gnlp-dialog-state.h \
+	gnlp-input-parser.c \
+	gnlp-input-parser.h \
 	gnlp-listener.c \
 	gnlp-listener.h \
 	gnlp-log.c \
@@ -24,6 +26,8 @@ gnlp_daemon_SOURCES = \
 	gnlp-speaker.h \
 	gnlp-voice-command.c \
 	gnlp-voice-command.h \
+	gnlp-voice-command-parser.c \
+	gnlp-voice-command-parser.h \
 	main.c \
 	$(NULL)
 
