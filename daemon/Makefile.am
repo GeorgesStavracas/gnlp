@@ -8,6 +8,8 @@ BUILT_SOURCES = \
 
 gnlp_daemon_SOURCES = \
 	$(BUILT_SOURCES) \
+	gnlp-command-dispatcher.c \
+	gnlp-command-dispatcher.h \
 	gnlp-context.c \
 	gnlp-context.h \
 	gnlp-daemon.c \

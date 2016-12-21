@@ -20,6 +20,7 @@
 #define GNLP_CONTEXT_H
 
 #include "gnlp.h"
+#include "gnlp-command-dispatcher.h"
 #include "gnlp-dialog-state.h"
 
 #include <glib-object.h>
@@ -38,6 +39,8 @@ void                 gnlp_context_set_language                   (GnlpContext   
                                                                   GnlpLanguage       *language);
 
 GnlpDialogState*     gnlp_context_get_dialog_state               (GnlpContext        *self);
+
+GnlpCommandDispatcher* gnlp_context_get_command_dispatcher       (GnlpContext        *self);
 
 G_END_DECLS
 

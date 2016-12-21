@@ -33,6 +33,8 @@ struct _GnlpContext
 
   GnlpDialogState    *dialog_state;
 
+  GnlpCommandDispatcher *dispatcher;
+
   GnlpLanguage       *language;
   gchar              *language_name;
   gboolean            language_set : 1;
@@ -42,6 +44,7 @@ G_DEFINE_TYPE (GnlpContext, gnlp_context, G_TYPE_OBJECT)
 
 enum {
   PROP_0,
+  PROP_COMMAND_DISPATCHER,
   PROP_LANGUAGE,
   PROP_LANGUAGE_NAME,
   N_PROPS
@@ -151,6 +154,10 @@ gnlp_context_get_property (GObject    *object,
 
   switch (prop_id)
     {
+    case PROP_COMMAND_DISPATCHER:
+      g_value_set_object (value, self->dispatcher);
+      break;
+
     case PROP_LANGUAGE:
       g_value_set_object (value, self->language);
       break;
@@ -189,6 +196,12 @@ gnlp_context_class_init (GnlpContextClass *klass)
   object_class->get_property = gnlp_context_get_property;
   object_class->set_property = gnlp_context_set_property;
 
+  properties[PROP_COMMAND_DISPATCHER] = g_param_spec_object ("command-dispatcher",
+                                                             "Command dispatcher",
+                                                             "Command dispatcher",
+                                                             GNLP_TYPE_COMMAND_DISPATCHER,
+                                                             G_PARAM_READABLE);
+
   properties[PROP_LANGUAGE] = g_param_spec_object ("language",
                                                    "Language",
                                                    "The current language",
@@ -207,6 +220,8 @@ gnlp_context_class_init (GnlpContextClass *klass)
 static void
 gnlp_context_init (GnlpContext *self)
 {
+  self->dispatcher = gnlp_command_dispatcher_new ();
+
   self->dialog_state = gnlp_dialog_state_new ();
 
   self->language_name = g_strdup (DEFAULT_LOCALE);
@@ -250,4 +265,12 @@ gnlp_context_get_dialog_state (GnlpContext *self)
   g_return_val_if_fail (GNLP_IS_CONTEXT (self), NULL);
 
   return self->dialog_state;
+}
+
+GnlpCommandDispatcher*
+gnlp_context_get_command_dispatcher (GnlpContext *self)
+{
+  g_return_val_if_fail (GNLP_IS_CONTEXT (self), NULL);
+
+  return self->dispatcher;
 }
