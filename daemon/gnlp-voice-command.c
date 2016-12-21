@@ -124,7 +124,7 @@ gnlp_voice_command_set_action (GnlpVoiceCommand *self,
   g_return_if_fail (action);
 
   g_clear_pointer (&self->action, g_free);
-  self->target = g_strdup (action);
+  self->action = g_strdup (action);
 }
 
 GPtrArray*
@@ -143,9 +143,12 @@ gnlp_voice_command_push_parameter (GnlpVoiceCommand *self,
   g_return_if_fail (parameter);
 
   if (!self->parameters)
-    self->parameters = g_ptr_array_new ();
+    {
+      self->parameters = g_ptr_array_new ();
+      g_ptr_array_add (self->parameters, NULL);
+    }
 
-  g_ptr_array_add (self->parameters, g_strdup (parameter));
+  g_ptr_array_insert (self->parameters, self->parameters->len - 1, g_strdup (parameter));
 }
 
 gchar*
@@ -164,7 +167,7 @@ gnlp_voice_command_pop_parameter (GnlpVoiceCommand *self)
 
   g_ptr_array_remove_index (self->parameters, idx);
 
-  if (idx == 0)
+  if (idx == 1)
     g_clear_pointer (&self->parameters, g_ptr_array_unref);
 
   return data;
