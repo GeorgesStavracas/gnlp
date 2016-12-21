@@ -179,49 +179,8 @@ status_recstart (Recog *recog,
   if (recog->jconf->input.speech_input != SP_MIC)
     return;
 
-  g_debug ("Recognizing input...");
-
+  set_dialog_state (self, GNLP_STATE_LISTENING);
   set_listening (self, TRUE);
-}
-
-/*
- * Sub function to output phoneme sequence.
- */
-static void
-print_hypo_phoneme (WORD_ID   *seq,
-                    gint       n,
-                    WORD_INFO *winfo)
-{
-  GString *phoneme;
-  int i, j;
-
-  if (!seq)
-    return;
-
-  phoneme = g_string_new ("\t");
-
-  for (i = 0; i < n; i++)
-    {
-      WORD_ID w;
-
-      if (i > 0)
-        g_string_append (phoneme, " | ");
-
-      w = seq[i];
-
-      for (j = 0; j < winfo->wlen[w]; j++)
-        {
-          static char buf[MAX_HMMNAME_LEN];
-
-          center_name (winfo->wseq[w][j]->name, buf);
-
-          g_string_append (phoneme, buf);
-        }
-    }
-
-  g_debug ("Phonemes: %s", phoneme->str);
-
-  g_string_free (phoneme, TRUE);
 }
 
 static const gchar*
@@ -331,9 +290,6 @@ output_result (Recog *recog,
           g_debug ("Sentence: %s", sentence->str);
 
           data->recognized_speech = g_string_free (sentence, FALSE);
-
-          /* phoneme sequence */
-          print_hypo_phoneme (seq, seqnum, winfo);
 
           /* confidence scores */
           g_debug ("Confidence:");
