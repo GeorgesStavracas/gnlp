@@ -19,6 +19,7 @@
 #ifndef GNLP_DAEMON_H
 #define GNLP_DAEMON_H
 
+#include "gnlp-dbus-generated.h"
 #include "gnlp-listener.h"
 
 #include <gio/gio.h>
@@ -32,6 +33,8 @@ G_DECLARE_FINAL_TYPE (GnlpDaemon, gnlp_daemon, GNLP, DAEMON, GApplication)
 GnlpDaemon*          gnlp_daemon_new                             (void);
 
 GnlpListener*        gnlp_daemon_get_listener                    (GnlpDaemon         *self);
+
+GnlpSpeechListener*  gnlp_daemon_get_speech_listener             (GnlpDaemon         *self);
 
 G_END_DECLS
 

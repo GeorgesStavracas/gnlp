@@ -22,7 +22,6 @@
 # include "config.h"
 #endif
 
-#include "gnlp-dbus-generated.h"
 #include "gnlp-daemon.h"
 #include "gnlp-listener.h"
 #include "gnlp-resources.h"
@@ -107,11 +106,6 @@ setup_speech_listener (GnlpDaemon *self)
   g_dbus_object_manager_server_export (self->dbus_server, G_DBUS_OBJECT_SKELETON (object));
 
   g_clear_object (&object);
-
-  g_signal_connect_swapped (self->listener,
-                            "command-received",
-                            G_CALLBACK (gnlp_speech_listener_emit_command_received),
-                            self->dbus_listener);
 
   g_signal_connect_swapped (self->listener,
                             "speech-recognized",
@@ -298,4 +292,12 @@ gnlp_daemon_get_listener (GnlpDaemon *self)
   g_return_val_if_fail (GNLP_IS_DAEMON (self), NULL);
 
   return self->listener;
+}
+
+GnlpSpeechListener*
+gnlp_daemon_get_speech_listener (GnlpDaemon *self)
+{
+  g_return_val_if_fail (GNLP_IS_DAEMON (self), NULL);
+
+  return self->dbus_listener;
 }
